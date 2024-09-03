@@ -1,4 +1,4 @@
-import React, {CSSProperties, FC, ReactNode, useState} from "react";
+import React, {CSSProperties, FC, ReactNode, useEffect, useState} from "react";
 import {createPortal} from "react-dom";
 import styles from './modal.module.css'
 import {ModalOverlay} from "./ModalOverlay";
@@ -19,7 +19,16 @@ export const Modal:FC<ModalProps> = ({onClose, open = false, title, children, st
 	const handleModalClick = (e: React.MouseEvent) => {
 		e.stopPropagation();
 	};
+	const handleEscButton = (e: KeyboardEvent) => {
+		e.key === 'Escape' ? onClose() :  null
+	};
+	useEffect(() => {
 
+		document.addEventListener('keydown', handleEscButton);
+		return () => {
+			document.removeEventListener('keydown', handleEscButton);
+		};
+	}, []);
 	return createPortal(
 		( open ? (
 			<>
