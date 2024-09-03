@@ -89,3 +89,26 @@
 	gap: 8px;
 	width: 130px;
 }
+
+
+.price_block {
+	display: flex;
+	flex-direction: row;
+	margin-top: 4px;
+	margin-bottom: 4px;
+	gap:8px;
+}
+
+.tabs_block {
+	display: flex;
+	margin-bottom: 40px;
+	margin-top: 20px;
+}
+
+.f16 {
+	font-size: 16px;
+}
+
+.f28 {
+	font-size: 28px;
+}

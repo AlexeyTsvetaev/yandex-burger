@@ -22,7 +22,7 @@ export const BurgerIngredients:FC<BurgerIngredientsProps>= ({data}) => {
 				<div className={styles.title}>
 					<p className='text text_type_main-large'>Соберите бургер</p>
 				</div>
-				<div style={{display: 'flex', marginTop: 20, marginBottom: 40}}>
+				<div className={styles.tabs_block}>
 					<Tab
 						value='one'
 						active={current === 'one'}
