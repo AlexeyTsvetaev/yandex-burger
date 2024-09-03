@@ -1,0 +1,1 @@
+export const url_ingredients = 'https://norma.nomoreparties.space/api/ingredients'
