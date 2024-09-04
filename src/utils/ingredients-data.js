@@ -1,33 +1,6 @@
-import styles from './burger-constructor.module.css';
-import {
-	Button,
-	ConstructorElement, CurrencyIcon,
-} from '@ya.praktikum/react-developer-burger-ui-components';
-import {FC, useState} from 'react';
-import {Modal} from "../Modal/Modal";
-import {OrderDetails} from "../OrderDetails/Order-details";
-import { DragIcon } from "@ya.praktikum/react-developer-burger-ui-components";
-import {IIngredients} from "../BurgerIngredients/Ingredient";
 
-export interface IBurgerConstructor {
-	img: string;
-}
 
-let data = [
-	{
-		_id: "643d69a5c3f7b9001cfa093c",
-		name: "Краторная булка N-200i",
-		type: "bun",
-		proteins: 80,
-		fat: 24,
-		carbohydrates: 53,
-		calories: 420,
-		price: 1255,
-		image: "https://code.s3.yandex.net/react/code/bun-02.png",
-		image_mobile: "https://code.s3.yandex.net/react/code/bun-02-mobile.png",
-		image_large: "https://code.s3.yandex.net/react/code/bun-02-large.png",
-		__v: 0
-	},
+export const data = [
 	{
 		_id: "643d69a5c3f7b9001cfa0941",
 		name: "Биокотлета из марсианской Магнолии",
@@ -110,20 +83,6 @@ let data = [
 		image: "https://code.s3.yandex.net/react/code/meat-04.png",
 		image_mobile: "https://code.s3.yandex.net/react/code/meat-04-mobile.png",
 		image_large: "https://code.s3.yandex.net/react/code/meat-04-large.png",
-		__v: 0
-	},
-	{
-		_id: "643d69a5c3f7b9001cfa094d",
-		name: "Флюоресцентная булка R2-D3",
-		type: "bun",
-		proteins: 44,
-		fat: 26,
-		carbohydrates: 85,
-		calories: 643,
-		price: 988,
-		image: "https://code.s3.yandex.net/react/code/bun-01.png",
-		image_mobile: "https://code.s3.yandex.net/react/code/bun-01-mobile.png",
-		image_large: "https://code.s3.yandex.net/react/code/bun-01-large.png",
 		__v: 0
 	},
 	{
@@ -225,60 +184,3 @@ let data = [
 		__v: 0
 	}
 ]
-
-data = data.filter((e:IIngredients) => e.type !== 'bun')
-
-export const BurgerConstructor: FC<IBurgerConstructor> = ({ img }) => {
-	const [openModal, setOpenModal] = useState(false)
-	return (
-		<>
-		{openModal && (
-			<Modal onClose={() => setOpenModal(false)} title={''} open={openModal} style={{height:'auto'}}>
-			<OrderDetails numberOrder={123456}/>
-			</Modal>
-		)}
-			<div className={styles.container}>
-				<div className={styles.main}>
-					<div className={styles.ingredients_block}>
-					<div className={styles.bread_container}><ConstructorElement
-						type='top'
-						isLocked={true}
-						text='Краторная булка N-200i (верх)'
-						price={200}
-						thumbnail={'https://code.s3.yandex.net/react/code/bun-01.png'}
-					/></div>
-					<div
-						className={styles.items_container}>
-						{data.map((e:IIngredients) => (<div className={styles.item_constr}>
-							<DragIcon type="primary"/>
-							<ConstructorElement
-								text={e.name}
-								price={e.price}
-								thumbnail={e.image}
-							/>
-						</div>))}
-
-					</div>
-						<div className={styles.bread_container}>
-							<ConstructorElement
-								type='bottom'
-								isLocked={true}
-								text='Краторная булка N-200i (низ)'
-								price={200}
-								thumbnail={'https://code.s3.yandex.net/react/code/bun-01.png'}
-					/></div>
-				</div>
-			</div>
-			<div
-				className={styles.order_block}>
-				<div className={styles.currency_icon}><p className='text text_type_digits-medium'>610</p>
-					<CurrencyIcon type='primary' />
-				</div>
-				<Button htmlType='button' type='primary' size='large' onClick={()=> setOpenModal(true)}>
-					Оформить заказ
-				</Button>
-			</div>
-		</div>
-		</>
-	);
-};

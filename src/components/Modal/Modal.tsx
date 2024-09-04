@@ -1,7 +1,7 @@
 import React, {CSSProperties, FC, ReactNode, useEffect, useState} from "react";
 import {createPortal} from "react-dom";
 import styles from './modal.module.css'
-import {ModalOverlay} from "./Modal-overlay";
+import {ModalOverlay} from "./modal-overlay";
 import {CloseIcon} from "@ya.praktikum/react-developer-burger-ui-components";
 
 
@@ -30,8 +30,7 @@ export const Modal:FC<ModalProps> = ({onClose, open = false, title, children, st
 		};
 	}, []);
 	return createPortal(
-		( open ? (
-			<>
+		( open && (
 				<ModalOverlay onClose={onClose}>
 					<div onClick={handleModalClick}>
 						<div className={styles.modal_content} style={{...style}}>
@@ -46,8 +45,7 @@ export const Modal:FC<ModalProps> = ({onClose, open = false, title, children, st
 				</ModalOverlay>
 
 
-			</>
-			) : <></>
+			)
 		),
 		modalRoot!
 	);

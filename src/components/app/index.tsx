@@ -1,7 +1,7 @@
-import { AppHeader } from '../AppHeader/App-header';
+import { AppHeader } from '../AppHeader/app-header';
 import styles from './app.module.scss';
-import { BurgerIngredients } from '../BurgerIngredients/Burger-ingredients';
-import { BurgerConstructor } from '../BurgerConstructor/Burger-construtror';
+import { BurgerIngredients } from '../BurgerIngredients/burger-ingredients';
+import { BurgerConstructor } from '../BurgerConstructor/burger-construtror';
 import React, { useEffect } from "react";
 import { url_ingredients } from "../../constants/api";
 import { IIngredients } from "../BurgerIngredients/Ingredient";
@@ -50,11 +50,11 @@ export const App = () => {
 			) : (
 				<>
 					<AppHeader />
-					<div
+					<main
 						className={styles.main_content}>
 						<BurgerIngredients data={serverData} />
 						<BurgerConstructor img={''} />
-					</div>
+					</main>
 				</>
 			)
 		)
