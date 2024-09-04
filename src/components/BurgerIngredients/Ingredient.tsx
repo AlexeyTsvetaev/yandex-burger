@@ -33,7 +33,7 @@ export const Ingredient: FC<IIngredients> = ({ name, price, image, _id, calories
 				<p className='text text_type_digits-default'>{price}</p>
 				<CurrencyIcon type='primary' />
 			</div>
-			<p className='text text_type_main-small'>
+			<p className={`${styles.text_center} text text_type_main-small`}>
 				{name}
 			</p>
 		</div>
