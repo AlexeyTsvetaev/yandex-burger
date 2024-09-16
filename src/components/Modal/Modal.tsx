@@ -1,4 +1,4 @@
-import React, {CSSProperties, FC, ReactNode, useEffect, useState} from "react";
+import React, {CSSProperties, FC, ReactNode, useEffect} from "react";
 import {createPortal} from "react-dom";
 import styles from './modal.module.css'
 import {ModalOverlay} from "./modal-overlay";
@@ -7,7 +7,7 @@ import {CloseIcon} from "@ya.praktikum/react-developer-burger-ui-components";
 
 interface ModalProps {
 	onClose: ()=> void;
-	title : string
+	title : string | undefined
 	children? : ReactNode
 	open: boolean
 	style? : CSSProperties

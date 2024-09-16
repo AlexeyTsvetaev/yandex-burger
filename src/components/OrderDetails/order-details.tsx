@@ -2,10 +2,10 @@ import {ReactComponent as Done} from "../../static/images/done.svg";
 import {FC} from "react";
 import styles from './order-details.module.css'
 interface IOrderDetails {
-	numberOrder: number
+	numberOrder: number | undefined
 }
 
-export const OrderDetails:FC<IOrderDetails> = ({numberOrder = 123456}) => {
+export const OrderDetails:FC<IOrderDetails> = ({numberOrder}) => {
 	return (
 		<div className={styles.container}>
 			<div>

@@ -2,61 +2,46 @@ import { AppHeader } from '../AppHeader/app-header';
 import styles from './app.module.scss';
 import { BurgerIngredients } from '../BurgerIngredients/burger-ingredients';
 import { BurgerConstructor } from '../BurgerConstructor/burger-construtror';
-import React, { useEffect } from "react";
-import { url_ingredients } from "../../constants/api";
-import { IIngredients } from "../BurgerIngredients/Ingredient";
-
-interface IngredientsData {
-	success: boolean;
-	data: IIngredients[];
-}
+import React, { useEffect } from 'react';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { DndProvider } from 'react-dnd';
+import { useDispatch } from 'react-redux';
+import { useGetQuery } from '../../hooks/use-get-query';
+import { url_ingredients } from '../../constants/api';
+import { IIngredientsResponse} from '../../types/ingredients';
+import { setIngredients } from '../../services/reducers/ingredients-slice';
 
 export const App = () => {
-	const [serverData, setServerData] = React.useState<IIngredients[]>([]);
-	const [isError, setIsError] = React.useState<string | null>(null);
-	const [isLoading, setIsLoading] = React.useState(false);
+	const dispatch = useDispatch();
+	const { data, isLoading, error } = useGetQuery<IIngredientsResponse>(
+		url_ingredients,
+		['ingredients'],
+		() => '',
+		{ enabled: true },
+		0,
+		false
+	);
 
 	useEffect(() => {
-		setIsLoading(true);
-		fetch(url_ingredients)
-			.then((response) => {
-				if (!response.ok) {
-					throw new Error(`${response.status}`);
-				}
-				return response.json();
-			})
-			.then((data: IngredientsData) => {
-				if (data.success) {
-					setServerData(data.data);
-					setIsError(null);
-				} else {
-					setIsError('Ошибка получения ингредиентов: сервер вернул успешный статус, но данные не корректны.');
-				}
-			})
-			.catch((error) => {
-				setIsError(`Ошибка получения ингредиентов: ${error.message}`);
-			})
-			.finally(() => {
-				setIsLoading(false);
-			});
-	}, []);
+		if (data && data.success) {
+			dispatch(setIngredients(data.data));
+		}
+	}, [data, dispatch]);
+
+	if (isLoading) return <div>Загрузка...</div>;
+	if (error) return <div>Ошибка: {error.message}</div>;
 
 	return (
-		isLoading ? (
-			<div className={styles.loading}>Загрузка...</div>
-		) : (
-			isError ? (
-				<div className={styles.loading}>Ошибка : {isError}</div>
-			) : (
-				<>
-					<AppHeader />
-					<main
-						className={styles.main_content}>
-						<BurgerIngredients data={serverData} />
-						<BurgerConstructor img={''} />
-					</main>
-				</>
-			)
-		)
+		<>
+			<AppHeader />
+			<DndProvider backend={HTML5Backend}>
+				<main className={styles.main_content}>
+					<BurgerIngredients />
+					<BurgerConstructor />
+				</main>
+			</DndProvider>
+		</>
 	);
 };
+
+export default App;
