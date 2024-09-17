@@ -14,17 +14,13 @@ import { useModal } from '../../hooks/use-modal';
 import { useDrop, useDrag } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-	addItemToConstructor,
 	removeItemFromConstructor,
 	moveItemInConstructor,
+	addItemToConstructorWithUuid,
 } from '../../services/reducers/ingredients-slice';
 import { RootState } from '../../store';
-import { useCreateQuery } from '../../hooks/use-create-query';
-import {
-	ICreateOrderRequest,
-	ICreateOrderResponse,
-} from '../../types/ingredients';
-import { url_order } from '../../constants/api';
+import { ICreateOrderResponse } from '../../types/ingredients';
+import { useCreateOrderMutation } from '../../services/rtk-query/api-slice';
 
 export const BurgerConstructor: FC = () => {
 	const { isModalOpen, openModal, closeModal } = useModal();
@@ -48,26 +44,23 @@ export const BurgerConstructor: FC = () => {
 		ingredientIds.unshift(bun._id);
 		ingredientIds.push(bun._id);
 	}
+	const [createOrder, { isLoading }] = useCreateOrderMutation();
+	const handleOrder = async () => {
+		if (!bun) {
+			console.error('Булка не выбрана. Невозможно оформить заказ.');
+			return; // Останавливаем выполнение, если булки нет
+		}
 
-	const { mutate, isLoading } = useCreateQuery<
-		ICreateOrderResponse,
-		ICreateOrderRequest
-	>(
-		(data) => {
-			setOrderData(data);
+		const orderData = { ingredients: ingredientIds };
+		try {
+			const response = await createOrder(orderData).unwrap();
+			setOrderData(response);
 			openModal();
-		},
-		url_order,
-		[]
-	);
-
-	const handleOrder = () => {
-		const orderData: ICreateOrderRequest = {
-			ingredients: ingredientIds,
-		};
-
-		mutate(orderData);
+		} catch (error) {
+			console.error('Failed to create order:', error);
+		}
 	};
+
 	const [, dropRef] = useDrop({
 		accept: 'ingredient',
 		drop(item: IIngredients) {
@@ -75,9 +68,9 @@ export const BurgerConstructor: FC = () => {
 				if (bun) {
 					dispatch(removeItemFromConstructor(bun.uuid));
 				}
-				dispatch(addItemToConstructor(item));
+				dispatch(addItemToConstructorWithUuid(item));
 			} else {
-				dispatch(addItemToConstructor(item));
+				dispatch(addItemToConstructorWithUuid(item));
 			}
 		},
 		collect: (monitor) => ({
@@ -136,11 +129,13 @@ export const BurgerConstructor: FC = () => {
 	};
 
 	const totalPrice = useMemo(() => {
-		return nonBunIngredients.reduce(
-			(total, ingredient) => total + ingredient.price,
-			0
-		) + (bun ? bun.price * 2 : 0)}, [ingredients, bun])
-
+		return (
+			nonBunIngredients.reduce(
+				(total, ingredient) => total + ingredient.price,
+				0
+			) + (bun ? bun.price * 2 : 0)
+		);
+	}, [ingredients, bun]);
 
 	return (
 		<>
@@ -200,12 +195,9 @@ export const BurgerConstructor: FC = () => {
 					</div>
 				</div>
 
-
 				<div className={styles.order_block}>
 					<div className={styles.currency_icon}>
-						<p className='text text_type_digits-medium'>
-							{totalPrice}
-						</p>
+						<p className='text text_type_digits-medium'>{totalPrice}</p>
 						<CurrencyIcon type='primary' />
 					</div>
 					<Button
@@ -213,7 +205,11 @@ export const BurgerConstructor: FC = () => {
 						type='primary'
 						size='large'
 						onClick={() => {
-							handleOrder(), openModal();
+							if (!bun) {
+								alert('Добавьте булку для оформления заказа');
+								return;
+							}
+							handleOrder();
 						}}>
 						Оформить заказ
 					</Button>

@@ -6,21 +6,12 @@ import React, { useEffect } from 'react';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider } from 'react-dnd';
 import { useDispatch } from 'react-redux';
-import { useGetQuery } from '../../hooks/use-get-query';
-import { url_ingredients } from '../../constants/api';
-import { IIngredientsResponse} from '../../types/ingredients';
 import { setIngredients } from '../../services/reducers/ingredients-slice';
+import { useGetIngredientsQuery } from '../../services/rtk-query/api-slice';
 
 export const App = () => {
 	const dispatch = useDispatch();
-	const { data, isLoading, error } = useGetQuery<IIngredientsResponse>(
-		url_ingredients,
-		['ingredients'],
-		() => '',
-		{ enabled: true },
-		0,
-		false
-	);
+	const { data, isLoading, error } = useGetIngredientsQuery();
 
 	useEffect(() => {
 		if (data && data.success) {
@@ -29,7 +20,13 @@ export const App = () => {
 	}, [data, dispatch]);
 
 	if (isLoading) return <div>Загрузка...</div>;
-	if (error) return <div>Ошибка: {error.message}</div>;
+	if (error) {
+		if ('status' in error) {
+			return <div>Ошибка: {`Status: ${error.status}`}</div>;
+		} else {
+			return <div>Ошибка: {error.message || 'Неизвестная ошибка'}</div>;
+		}
+	}
 
 	return (
 		<>

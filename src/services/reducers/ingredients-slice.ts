@@ -14,6 +14,13 @@ const initialState: IngredientsState = {
 	burgerConstructor: [],
 };
 
+export const addItemToConstructorWithUuid = (ingredient: IIngredients) => {
+	return ingredientsSlice.actions.addItemToConstructor({
+		...ingredient,
+		uuid: uuidv4(),
+	});
+};
+
 const ingredientsSlice = createSlice({
 	name: 'ingredients',
 	initialState,
@@ -24,8 +31,11 @@ const ingredientsSlice = createSlice({
 		setViewedIngredient(state, action: PayloadAction<IIngredients | null>) {
 			state.viewedIngredient = action.payload;
 		},
-		addItemToConstructor(state, action: PayloadAction<IIngredients>) {
-			state.burgerConstructor.push({ ...action.payload, uuid: uuidv4() });
+		addItemToConstructor(
+			state,
+			action: PayloadAction<IIngredients & { uuid: string }>
+		) {
+			state.burgerConstructor.push(action.payload);
 		},
 		removeItemFromConstructor(state, action: PayloadAction<string>) {
 			state.burgerConstructor = state.burgerConstructor.filter(
@@ -37,7 +47,6 @@ const ingredientsSlice = createSlice({
 			action: PayloadAction<{ fromIndex: number; toIndex: number }>
 		) {
 			const { fromIndex, toIndex } = action.payload;
-			// Перемещение происходит только для ингредиентов
 			const [movedItem] = state.burgerConstructor.splice(fromIndex, 1);
 			state.burgerConstructor.splice(toIndex, 0, movedItem);
 		},
@@ -50,9 +59,9 @@ const ingredientsSlice = createSlice({
 export const {
 	setIngredients,
 	setViewedIngredient,
-	addItemToConstructor,
 	removeItemFromConstructor,
 	moveItemInConstructor,
 	clearConstructor,
 } = ingredientsSlice.actions;
+
 export default ingredientsSlice.reducer;

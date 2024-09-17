@@ -1,4 +1,7 @@
-import { Tab } from '@ya.praktikum/react-developer-burger-ui-components';
+import {
+	Counter,
+	Tab,
+} from '@ya.praktikum/react-developer-burger-ui-components';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import styles from './burger-ingredients.module.css';
 import { IIngredients, Ingredient } from './Ingredient';
@@ -14,10 +17,12 @@ export const BurgerIngredients: FC = () => {
 	const mainsRef = useRef<HTMLDivElement>(null);
 	const data = useSelector((state: RootState) => state.ingredients.ingredients);
 
-	const buns = data.filter((item : IIngredients) => item.type === 'bun');
-	const sauces = data.filter((item : IIngredients) => item.type === 'sauce');
-	const mains = data.filter((item : IIngredients) => item.type === 'main');
-
+	const buns = data.filter((item: IIngredients) => item.type === 'bun');
+	const sauces = data.filter((item: IIngredients) => item.type === 'sauce');
+	const mains = data.filter((item: IIngredients) => item.type === 'main');
+	const countIngredient = useSelector(
+		(state: RootState) => state.ingredients.burgerConstructor
+	);
 	const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => {
 		if (ref.current) {
 			ref.current.scrollIntoView({ behavior: 'smooth' });
@@ -35,7 +40,7 @@ export const BurgerIngredients: FC = () => {
 		const distances = [
 			{ section: 'one', distance: Math.abs(containerTop - bunsPos) },
 			{ section: 'two', distance: Math.abs(containerTop - saucesPos) },
-			{ section: 'three', distance: Math.abs(containerTop - mainsPos) }
+			{ section: 'three', distance: Math.abs(containerTop - mainsPos) },
 		];
 
 		const closestSection = distances.reduce((prev, curr) =>
@@ -44,6 +49,18 @@ export const BurgerIngredients: FC = () => {
 
 		setCurrent(closestSection.section);
 	};
+
+	const ingredientCountMap = countIngredient.reduce(
+		(acc: { [key: string]: number }, item: IIngredients & { uuid: string }) => {
+			if (acc[item._id]) {
+				acc[item._id] += 1;
+			} else {
+				acc[item._id] = 1;
+			}
+			return acc;
+		},
+		{}
+	);
 
 	useEffect(() => {
 		const container = containerRef.current;
@@ -57,15 +74,14 @@ export const BurgerIngredients: FC = () => {
 		};
 	}, []);
 
-
 	return (
 		<div className={styles.container}>
 			<div className={styles.title}>
-				<p className="text text_type_main-large">Соберите бургер</p>
+				<p className='text text_type_main-large'>Соберите бургер</p>
 			</div>
 			<div className={styles.tabs_block}>
 				<Tab
-					value="one"
+					value='one'
 					active={current === 'one'}
 					onClick={() => {
 						setCurrent('one');
@@ -74,7 +90,7 @@ export const BurgerIngredients: FC = () => {
 					Булки
 				</Tab>
 				<Tab
-					value="two"
+					value='two'
 					active={current === 'two'}
 					onClick={() => {
 						setCurrent('two');
@@ -83,7 +99,7 @@ export const BurgerIngredients: FC = () => {
 					Соусы
 				</Tab>
 				<Tab
-					value="three"
+					value='three'
 					active={current === 'three'}
 					onClick={() => {
 						setCurrent('three');
@@ -95,7 +111,7 @@ export const BurgerIngredients: FC = () => {
 
 			<div className={styles.ingredients_container} ref={containerRef}>
 				<div className={styles.container_body}>
-					<p ref={bunsRef} className="text text_type_main-medium">
+					<p ref={bunsRef} className='text text_type_main-medium'>
 						Булки
 					</p>
 					<div className={styles.bread_container}>
@@ -111,11 +127,12 @@ export const BurgerIngredients: FC = () => {
 								proteins={item.proteins}
 								_id={item._id}
 								type={item.type}
+								count={ingredientCountMap[item._id]}
 							/>
 						))}
 					</div>
 
-					<p ref={saucesRef} className="text text_type_main-medium">
+					<p ref={saucesRef} className='text text_type_main-medium'>
 						Соусы
 					</p>
 					<div className={styles.bread_container}>
@@ -131,11 +148,12 @@ export const BurgerIngredients: FC = () => {
 								proteins={item.proteins}
 								_id={item._id}
 								type={item.type}
+								count={ingredientCountMap[item._id]}
 							/>
 						))}
 					</div>
 
-					<p ref={mainsRef} className="text text_type_main-medium">
+					<p ref={mainsRef} className='text text_type_main-medium'>
 						Начинки
 					</p>
 					<div className={styles.bread_container}>
@@ -151,6 +169,7 @@ export const BurgerIngredients: FC = () => {
 								proteins={item.proteins}
 								_id={item._id}
 								type={item.type}
+								count={ingredientCountMap[item._id]}
 							/>
 						))}
 					</div>

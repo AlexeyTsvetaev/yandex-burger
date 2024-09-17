@@ -1,12 +1,15 @@
-import React, {FC} from 'react';
+import React, { FC } from 'react';
 import styles from './burger-ingredients.module.css';
-import { CurrencyIcon} from '@ya.praktikum/react-developer-burger-ui-components';
-import {Modal} from '../Modal/Modal';
-import {OrderDetails} from '../IngredientDetails/ingredient-details';
-import {useModal} from '../../hooks/use-modal';
-import {useDrag} from 'react-dnd';
-import {useDispatch} from "react-redux";
-import {setViewedIngredient} from "../../services/reducers/ingredients-slice";
+import {
+	Counter,
+	CurrencyIcon,
+} from '@ya.praktikum/react-developer-burger-ui-components';
+import { Modal } from '../Modal/Modal';
+import { OrderDetails } from '../IngredientDetails/ingredient-details';
+import { useModal } from '../../hooks/use-modal';
+import { useDrag } from 'react-dnd';
+import { useDispatch } from 'react-redux';
+import { setViewedIngredient } from '../../services/reducers/ingredients-slice';
 export interface IIngredients {
 	_id: string;
 	name: string;
@@ -17,19 +20,34 @@ export interface IIngredients {
 	calories?: number;
 	price: number;
 	image: string;
+	count?: number;
 }
 
-export const Ingredient: FC<IIngredients> = ({ name, price, image, _id, calories, proteins, fat, carbohydrates, type }) => {
+export const Ingredient: FC<IIngredients> = ({
+	name,
+	price,
+	image,
+	_id,
+	calories,
+	proteins,
+	fat,
+	carbohydrates,
+	type,
+	count,
+}) => {
 	const { isModalOpen, openModal, closeModal } = useModal();
 	const [, dragRef] = useDrag({
 		type: 'ingredient',
 		item: { _id, name, price, image, type },
 	});
-	const dispatch = useDispatch()
+	const dispatch = useDispatch();
 	return (
 		<>
-		{isModalOpen && (
-			<Modal onClose={() => closeModal()} open={isModalOpen} title={'Детали ингредиента'}>
+			{isModalOpen && (
+				<Modal
+					onClose={() => closeModal()}
+					open={isModalOpen}
+					title={'Детали ингредиента'}>
 					<OrderDetails
 						name={name}
 						image={image}
@@ -41,9 +59,8 @@ export const Ingredient: FC<IIngredients> = ({ name, price, image, _id, calories
 						_id={_id}
 						type={type}
 					/>
-			</Modal>
-		)
-		}
+				</Modal>
+			)}
 			<div
 				ref={dragRef}
 				className={styles.ingredient_item}
@@ -60,20 +77,20 @@ export const Ingredient: FC<IIngredients> = ({ name, price, image, _id, calories
 								carbohydrates: carbohydrates,
 								image: image,
 								price: price,
-								proteins: proteins
+								proteins: proteins,
 							})
 						);
 				}}>
-				<img className={styles.img_item} src={image} alt={name}/>
-				<div
-					className={styles.price_block}>
-				<p className='text text_type_digits-default'>{price}</p>
-				<CurrencyIcon type='primary' />
-			</div>
+				<div>{count && <Counter count={count} extraClass='m-1' />}</div>
+				<img className={styles.img_item} src={image} alt={name} />
+				<div className={styles.price_block}>
+					<p className='text text_type_digits-default'>{price}</p>
+					<CurrencyIcon type='primary' />
+				</div>
 				<p className={`${styles.text_center} text text_type_main-small`}>
-				{name}
+					{name}
 				</p>
-		</div>
+			</div>
 		</>
 	);
 };

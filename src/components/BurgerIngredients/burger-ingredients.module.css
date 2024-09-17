@@ -18,13 +18,13 @@
 }
 
 .ingredient_item {
-	cursor: pointer;
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
+	justify-content: space-between;
 	align-items: center;
 	width: 272px;
 	height: 208px;
+	cursor: pointer;
 }
 
 .ingredients_container {
@@ -74,9 +74,9 @@
 	flex-direction: row;
 	justify-content: center;
 	align-items: center;
+	gap: 20px;
 	width:100%;
 	height: 56px;
-	gap: 20px;
 	margin-top: 32px;
 	margin-bottom: 60px;
 }
@@ -94,15 +94,15 @@
 .price_block {
 	display: flex;
 	flex-direction: row;
+	gap:8px;
 	margin-top: 4px;
 	margin-bottom: 4px;
-	gap:8px;
 }
 
 .tabs_block {
 	display: flex;
-	margin-bottom: 40px;
 	margin-top: 20px;
+	margin-bottom: 40px;
 }
 
 .f16 {
@@ -115,4 +115,10 @@
 
 .text_center {
 	text-align: center;
+}
+
+.count_container {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
 }
