@@ -25,6 +25,7 @@
 	width: 272px;
 	height: 208px;
 	cursor: pointer;
+	position: relative;
 }
 
 .ingredients_container {
