@@ -20,10 +20,12 @@
 .ingredient_item {
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
+	justify-content: space-between;
 	align-items: center;
 	width: 272px;
 	height: 208px;
+	cursor: pointer;
+	position: relative;
 }
 
 .ingredients_container {
@@ -48,4 +50,76 @@
 .img_item {
 	width: 240px;
 	height: 120px;
+}
+
+
+.image {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 480px;
+	height: 240px;
+	margin-bottom: 16px;
+}
+
+.modal_container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+}
+
+.info_container {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	gap: 20px;
+	width:100%;
+	height: 56px;
+	margin-top: 32px;
+	margin-bottom: 60px;
+}
+
+.info_item {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 8px;
+	width: 130px;
+}
+
+
+.price_block {
+	display: flex;
+	flex-direction: row;
+	gap:8px;
+	margin-top: 4px;
+	margin-bottom: 4px;
+}
+
+.tabs_block {
+	display: flex;
+	margin-top: 20px;
+	margin-bottom: 40px;
+}
+
+.f16 {
+	font-size: 16px;
+}
+
+.f28 {
+	font-size: 28px;
+}
+
+.text_center {
+	text-align: center;
+}
+
+.count_container {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
 }

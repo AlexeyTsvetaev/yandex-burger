@@ -1,21 +1,44 @@
-import { AppHeader } from '../AppHeader/App-header';
-import './app.module.scss';
-import { BurgerIngredients } from '../BurgerIngredients/Burger-ingredients';
-import { BurgerConstructor } from '../BurgerConstructor/Burger-construtror';
+import { AppHeader } from '../AppHeader/app-header';
+import styles from './app.module.scss';
+import { BurgerIngredients } from '../BurgerIngredients/burger-ingredients';
+import { BurgerConstructor } from '../BurgerConstructor/burger-construtror';
+import React, { useEffect } from 'react';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { DndProvider } from 'react-dnd';
+import { useDispatch } from 'react-redux';
+import { setIngredients } from '../../services/reducers/ingredients-slice';
+import { useGetIngredientsQuery } from '../../services/rtk-query/api-slice';
 
 export const App = () => {
+	const dispatch = useDispatch();
+	const { data, isLoading, error } = useGetIngredientsQuery();
+
+	useEffect(() => {
+		if (data && data.success) {
+			dispatch(setIngredients(data.data));
+		}
+	}, [data, dispatch]);
+
+	if (isLoading) return <div>Загрузка...</div>;
+	if (error) {
+		if ('status' in error) {
+			return <div>Ошибка: {`Status: ${error.status}`}</div>;
+		} else {
+			return <div>Ошибка: {error.message || 'Неизвестная ошибка'}</div>;
+		}
+	}
+
 	return (
 		<>
 			<AppHeader />
-			<div
-				style={{
-					display: 'flex',
-					flexDirection: 'row',
-					justifyContent: 'center',
-				}}>
-				<BurgerIngredients />
-				<BurgerConstructor  img={''}/>
-			</div>
+			<DndProvider backend={HTML5Backend}>
+				<main className={styles.main_content}>
+					<BurgerIngredients />
+					<BurgerConstructor />
+				</main>
+			</DndProvider>
 		</>
 	);
 };
+
+export default App;

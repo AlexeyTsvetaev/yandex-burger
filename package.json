@@ -8,6 +8,7 @@
 		"@svgr/webpack": "^8.0.1",
 		"@types/react": "^18.2.0",
 		"@types/react-dom": "^18.2.1",
+		"@types/uuid": "^10.0.0",
 		"@typescript-eslint/eslint-plugin": "^5.59.11",
 		"@typescript-eslint/parser": "^5.59.11",
 		"autoprefixer": "^10.4.14",
@@ -60,12 +61,22 @@
 	},
 	"dependencies": {
 		"@babel/runtime": "^7.25.4",
+		"@reduxjs/toolkit": "^2.2.7",
+		"@tanstack/react-query": "^5.56.2",
+		"@types/react-redux": "^7.1.33",
 		"@ya.praktikum/react-developer-burger-ui-components": "^1.14.2",
+		"axios": "^1.7.7",
 		"clsx": "^2.1.0",
 		"core-js": "^3.38.1",
 		"prop-types": "^15.8.1",
 		"react": "^18.2.0",
-		"react-dom": "^18.2.0"
+		"react-dnd": "^16.0.1",
+		"react-dnd-html5-backend": "^16.0.1",
+		"react-dom": "^18.2.0",
+		"react-redux": "^9.1.2",
+		"redux": "^5.0.1",
+		"uuid": "^10.0.0",
+		"react-query": "^3.39.3"
 	},
 	"lint-staged": {
 		"*.{css,scss}": "yarn stylelint:fix",

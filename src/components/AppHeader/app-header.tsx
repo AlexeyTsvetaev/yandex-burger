@@ -10,7 +10,7 @@ export const AppHeader: FC = () => {
 	return (
 		<header className={styles.main}>
 			<div className={styles.container}>
-				<div className={`${styles.left_group} , m-4 ${styles.left}`}>
+				<div className={`${styles.left_group} , m-4`}>
 					<nav className={styles.button_primary}>
 						<BurgerIcon type='primary' />
 						<p className='text text_type_main-default'>Конструктор</p>
@@ -20,7 +20,7 @@ export const AppHeader: FC = () => {
 						<p className='text text_type_main-default'>Лента заказов</p>
 					</nav>
 				</div>
-				<nav className={`${styles.profile_button} ${styles.right}`}>
+				<nav className={`${styles.profile_button}`}>
 					<ProfileIcon type='secondary' />
 					<p className='text text_type_main-default'>Личный кабинет</p>
 				</nav>
