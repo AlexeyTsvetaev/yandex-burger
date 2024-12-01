@@ -21,6 +21,8 @@ import {
 import { RootState } from '../../store';
 import { ICreateOrderResponse } from '../../types/ingredients';
 import { useCreateOrderMutation } from '../../services/rtk-query/api-slice';
+import { getRefTokenToLocal } from '../../constants/local-storage';
+import { useNavigate } from 'react-router-dom';
 
 export const BurgerConstructor: FC = () => {
 	const { isModalOpen, openModal, closeModal } = useModal();
@@ -36,6 +38,7 @@ export const BurgerConstructor: FC = () => {
 	const orderDetails = useSelector(
 		(state: RootState) => state.ingredients.burgerConstructor
 	);
+	const navigate = useNavigate();
 	const ingredientIds = orderDetails
 		.filter((item) => item.type !== 'bun') // Фильтруем все, кроме булок
 		.map((item) => item._id); // Массив _id
@@ -44,6 +47,7 @@ export const BurgerConstructor: FC = () => {
 		ingredientIds.unshift(bun._id);
 		ingredientIds.push(bun._id);
 	}
+	const refToken = getRefTokenToLocal();
 	const [createOrder, { isLoading }] = useCreateOrderMutation();
 	const handleOrder = async () => {
 		if (!bun) {
@@ -209,7 +213,9 @@ export const BurgerConstructor: FC = () => {
 								alert('Добавьте булку для оформления заказа');
 								return;
 							}
-							handleOrder();
+							if (refToken) {
+								handleOrder();
+							} else navigate('/login');
 						}}>
 						Оформить заказ
 					</Button>

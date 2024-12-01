@@ -1,44 +1,101 @@
-import { AppHeader } from '../AppHeader/app-header';
-import styles from './app.module.scss';
-import { BurgerIngredients } from '../BurgerIngredients/burger-ingredients';
-import { BurgerConstructor } from '../BurgerConstructor/burger-construtror';
-import React, { useEffect } from 'react';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-import { DndProvider } from 'react-dnd';
-import { useDispatch } from 'react-redux';
-import { setIngredients } from '../../services/reducers/ingredients-slice';
-import { useGetIngredientsQuery } from '../../services/rtk-query/api-slice';
+import React from 'react';
+import {
+	Routes,
+	Route,
+	useLocation,
+	useNavigate,
+	Navigate,
+} from 'react-router-dom';
+import { MainPage } from '../../pages/main-page';
+import { IngredientsInfoPage } from '../../pages/ingredients-info-page';
+import { LoginPage } from '../../pages/login';
+import { RegisterPage } from '../../pages/register';
+import { ForgotPasswordPage } from '../../pages/forgot-password';
+import { ResetPasswordPage } from '../../pages/reset-password';
+import { ProfilePage } from '../../pages/profile';
+import { Error404 } from '../ErrorBoundary/404';
+import ErrorBoundary from '../ErrorBoundary';
+import ProtectedRoute from './protected-route';
+import AuthRoute from './auth-route';
+import { Modal } from '../Modal/Modal';
+import { OrderDetails } from '../IngredientDetails/ingredient-details';
+import { store } from '../../store';
+import { getTokenToLocal } from '../../constants/local-storage';
 
-export const App = () => {
-	const dispatch = useDispatch();
-	const { data, isLoading, error } = useGetIngredientsQuery();
+const AppContent = () => {
+	const isAuth = !!getTokenToLocal();
+	const location = useLocation();
+	const navigate = useNavigate();
+	const background = location.state?.background;
+	const data = store.getState().ingredients.viewedIngredient;
 
-	useEffect(() => {
-		if (data && data.success) {
-			dispatch(setIngredients(data.data));
-		}
-	}, [data, dispatch]);
-
-	if (isLoading) return <div>Загрузка...</div>;
-	if (error) {
-		if ('status' in error) {
-			return <div>Ошибка: {`Status: ${error.status}`}</div>;
-		} else {
-			return <div>Ошибка: {error.message || 'Неизвестная ошибка'}</div>;
-		}
-	}
+	const handleModalClose = () => {
+		navigate(-1); // Закрытие модалки возвращает на предыдущую страницу
+	};
 
 	return (
-		<>
-			<AppHeader />
-			<DndProvider backend={HTML5Backend}>
-				<main className={styles.main_content}>
-					<BurgerIngredients />
-					<BurgerConstructor />
-				</main>
-			</DndProvider>
-		</>
+		<ErrorBoundary>
+			<Routes location={background || location}>
+				{/* Основные маршруты */}
+				<Route path='/' element={<MainPage />} />
+				<Route path='/ingredients/:id' element={<IngredientsInfoPage />} />
+
+				{/* Защищённые маршруты */}
+				<Route element={<ProtectedRoute isAuth={isAuth} />}>
+					<Route path='/profile' element={<ProfilePage />} />
+				</Route>
+
+				{/* Для неавторизованных пользователей */}
+				<Route element={<AuthRoute isAuth={isAuth} />}>
+					<Route path='/login' element={<LoginPage />} />
+					<Route path='/register' element={<RegisterPage />} />
+					<Route path='/forgot-password' element={<ForgotPasswordPage />} />
+				</Route>
+
+				{/* Специальная защита для reset-password */}
+				<Route
+					path='/reset-password'
+					element={
+						location.state?.fromForgotPassword ? (
+							<ResetPasswordPage />
+						) : (
+							<Navigate to='/forgot-password' replace />
+						)
+					}
+				/>
+
+				{/* 404 страница */}
+				<Route path='*' element={<Error404 />} />
+			</Routes>
+
+			{/* Модалка для ингредиентов */}
+			{background && data && (
+				<Routes>
+					<Route
+						path='/ingredients/:id'
+						element={
+							<Modal
+								onClose={handleModalClose}
+								open={true}
+								title='Детали ингредиента'>
+								<OrderDetails
+									name={data.name}
+									image={data.image}
+									calories={data.calories}
+									fat={data.fat}
+									carbohydrates={data.carbohydrates}
+									proteins={data.proteins}
+									price={data.price}
+									_id={data._id}
+									type={data.type}
+								/>
+							</Modal>
+						}
+					/>
+				</Routes>
+			)}
+		</ErrorBoundary>
 	);
 };
 
-export default App;
+export default AppContent;

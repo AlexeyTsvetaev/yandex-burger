@@ -73,10 +73,12 @@
 		"react-dnd": "^16.0.1",
 		"react-dnd-html5-backend": "^16.0.1",
 		"react-dom": "^18.2.0",
+		"react-query": "^3.39.3",
 		"react-redux": "^9.1.2",
+		"react-router": "^6.28.0",
+		"react-router-dom": "^6.28.0",
 		"redux": "^5.0.1",
-		"uuid": "^10.0.0",
-		"react-query": "^3.39.3"
+		"uuid": "^10.0.0"
 	},
 	"lint-staged": {
 		"*.{css,scss}": "yarn stylelint:fix",
