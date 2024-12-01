@@ -5,8 +5,7 @@ import {
 	CurrencyIcon,
 	DragIcon,
 } from '@ya.praktikum/react-developer-burger-ui-components';
-import { FC, useMemo, useState } from 'react';
-import { Modal } from '../Modal/Modal';
+import React, { FC, useMemo, useState } from 'react';
 import { OrderDetails } from '../OrderDetails/order-details';
 
 import { IIngredients } from '../BurgerIngredients/Ingredient';
@@ -23,6 +22,7 @@ import { ICreateOrderResponse } from '../../types/ingredients';
 import { useCreateOrderMutation } from '../../services/rtk-query/api-slice';
 import { getRefTokenToLocal } from '../../constants/local-storage';
 import { useNavigate } from 'react-router-dom';
+import { OrderModal } from '../Modal/order-modal';
 
 export const BurgerConstructor: FC = () => {
 	const { isModalOpen, openModal, closeModal } = useModal();
@@ -144,7 +144,7 @@ export const BurgerConstructor: FC = () => {
 	return (
 		<>
 			{isModalOpen && (
-				<Modal
+				<OrderModal
 					onClose={() => closeModal()}
 					title={
 						isLoading
@@ -158,7 +158,7 @@ export const BurgerConstructor: FC = () => {
 							isLoading ? 0 : successOrderData && successOrderData.order.number
 						}
 					/>
-				</Modal>
+				</OrderModal>
 			)}
 			<div className={styles.container} ref={dropRef}>
 				<div className={styles.main}>

@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
 	Routes,
 	Route,
 	useLocation,
 	useNavigate,
 	Navigate,
+	useParams,
 } from 'react-router-dom';
 import { MainPage } from '../../pages/main-page';
 import { IngredientsInfoPage } from '../../pages/ingredients-info-page';
@@ -18,7 +19,6 @@ import ErrorBoundary from '../ErrorBoundary';
 import ProtectedRoute from './protected-route';
 import AuthRoute from './auth-route';
 import { Modal } from '../Modal/Modal';
-import { OrderDetails } from '../IngredientDetails/ingredient-details';
 import { store } from '../../store';
 import { getTokenToLocal } from '../../constants/local-storage';
 
@@ -27,8 +27,10 @@ const AppContent = () => {
 	const location = useLocation();
 	const navigate = useNavigate();
 	const background = location.state?.background;
-	const data = store.getState().ingredients.viewedIngredient;
-
+	const ingredients = store
+		.getState()
+		.ingredients.ingredients.filter((e) => e._id === location.pathname);
+	const data = { ...ingredients[0] };
 	const handleModalClose = () => {
 		navigate(-1); // Закрытие модалки возвращает на предыдущую страницу
 	};
@@ -78,17 +80,17 @@ const AppContent = () => {
 								onClose={handleModalClose}
 								open={true}
 								title='Детали ингредиента'>
-								<OrderDetails
-									name={data.name}
-									image={data.image}
-									calories={data.calories}
-									fat={data.fat}
-									carbohydrates={data.carbohydrates}
-									proteins={data.proteins}
-									price={data.price}
-									_id={data._id}
-									type={data.type}
-								/>
+								{/*<OrderDetails*/}
+								{/*	name={data.name}*/}
+								{/*	image={data.image}*/}
+								{/*	calories={data.calories}*/}
+								{/*	fat={data.fat}*/}
+								{/*	carbohydrates={data.carbohydrates}*/}
+								{/*	proteins={data.proteins}*/}
+								{/*	price={data.price}*/}
+								{/*	_id={data._id}*/}
+								{/*	type={data.type}*/}
+								{/*/>*/}
 							</Modal>
 						}
 					/>

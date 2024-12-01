@@ -13,6 +13,7 @@ import { resetPassword } from '../../services/fetch/reset-password';
 export const ForgotPasswordPage = () => {
 	const [email, setEmail] = React.useState('');
 	const [error, setError] = React.useState(false);
+
 	useEffect(() => {
 		if (email !== '') {
 			if (!reg.test(email)) {
@@ -20,7 +21,9 @@ export const ForgotPasswordPage = () => {
 			} else setError(false);
 		}
 	}, [email]);
+
 	const navigate = useNavigate();
+
 	const handleForgotPassword = async () => {
 		try {
 			await resetPassword(email, () =>
@@ -32,6 +35,16 @@ export const ForgotPasswordPage = () => {
 			console.log(e);
 		}
 	};
+
+	const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setEmail(e.target.value);
+	};
+
+	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		handleForgotPassword();
+	};
+
 	return (
 		<>
 			<AppHeader />
@@ -42,24 +55,24 @@ export const ForgotPasswordPage = () => {
 							<p className='text text_type_main-medium'>
 								Восстановление пароля
 							</p>
-							<Input
-								type={'email'}
-								placeholder={'E-mail'}
-								onChange={(e) => setEmail(e.target.value)}
-								value={email}
-								name={'email'}
-								errorText={error ? 'Введите корректный E-mail' : ''}
-								error={error}
-								size={'default'}
-								extraClass='ml-1'
-							/>
-							<Button
-								htmlType='button'
-								type='primary'
-								size='large'
-								onClick={handleForgotPassword}>
-								Восстановить
-							</Button>
+							<form
+								onSubmit={handleSubmit}
+								className={containerStyles.content_container}>
+								<Input
+									type={'email'}
+									placeholder={'E-mail'}
+									onChange={handleEmailChange}
+									value={email}
+									name={'email'}
+									errorText={error ? 'Введите корректный E-mail' : ''}
+									error={error}
+									size={'default'}
+									extraClass='ml-1'
+								/>
+								<Button htmlType='submit' type='primary' size='large'>
+									Восстановить
+								</Button>
+							</form>
 							<div className={containerStyles.footer_info}>
 								<p className='text text_type_main-default text_color_inactive'>
 									Вспомнили пароль? <Link to={'/login'}>Войти</Link>

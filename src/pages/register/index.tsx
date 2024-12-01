@@ -17,15 +17,20 @@ export const RegisterPage = () => {
 	const [name, setName] = React.useState('');
 	const [error, setError] = React.useState(false);
 	const navigate = useNavigate();
+
 	useEffect(() => {
 		if (email !== '') {
 			if (!reg.test(email)) {
 				setError(true);
-			} else setError(false);
+			} else {
+				setError(false);
+			}
 		}
 	}, [email]);
 
-	const handleRegClick = async () => {
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault(); // Предотвращаем перезагрузку страницы при отправке формы
+		if (error) return; // Если есть ошибка, не отправляем форму
 		try {
 			await registerUser(email, password, name, () => navigate('/'));
 		} catch (error) {
@@ -41,39 +46,42 @@ export const RegisterPage = () => {
 					<div className={styles.info_container}>
 						<div className={containerStyles.content_container}>
 							<p className='text text_type_main-medium'>Регистрация</p>
-							<Input
-								type={'text'}
-								placeholder={'Имя'}
-								onChange={(e) => setName(e.target.value)}
-								value={name}
-								name={'name'}
-								size={'default'}
-								extraClass='ml-1'
-							/>
-							<Input
-								type={'email'}
-								placeholder={'E-mail'}
-								onChange={(e) => setEmail(e.target.value)}
-								value={email}
-								name={'email'}
-								errorText={error ? 'Введите корректный E-mail' : ''}
-								error={error}
-								size={'default'}
-								extraClass='ml-1'
-							/>
-							<PasswordInput
-								onChange={(e) => setPassword(e.target.value)}
-								value={password}
-								name={'Пароль'}
-								extraClass='mb-2'
-							/>
-							<Button
-								htmlType='button'
-								type='primary'
-								size='large'
-								onClick={handleRegClick}>
-								Зарегистрироваться
-							</Button>
+							<form
+								onSubmit={handleSubmit}
+								className={containerStyles.content_container}>
+								<Input
+									type={'text'}
+									placeholder={'Имя'}
+									onChange={(e) => setName(e.target.value)}
+									value={name}
+									name={'name'}
+									size={'default'}
+									extraClass='ml-1'
+								/>
+								<Input
+									type={'email'}
+									placeholder={'E-mail'}
+									onChange={(e) => setEmail(e.target.value)}
+									value={email}
+									name={'email'}
+									errorText={error ? 'Введите корректный E-mail' : ''}
+									error={error}
+									size={'default'}
+									extraClass='ml-1'
+								/>
+								<PasswordInput
+									onChange={(e) => setPassword(e.target.value)}
+									value={password}
+									name={'Пароль'}
+									extraClass='mb-2'
+								/>
+								<Button
+									htmlType='submit' // Изменено на 'submit'
+									type='primary'
+									size='large'>
+									Зарегистрироваться
+								</Button>
+							</form>
 							<div className={containerStyles.footer_info}>
 								<p className='text text_type_main-default text_color_inactive'>
 									Уже зарегистрированы? <Link to={'/login'}>Войти</Link>

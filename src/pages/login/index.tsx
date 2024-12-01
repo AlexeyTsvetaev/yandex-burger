@@ -16,20 +16,22 @@ export const LoginPage = () => {
 	const [password, setPassword] = React.useState('');
 	const [error, setError] = React.useState(false);
 	const navigate = useNavigate();
+
 	useEffect(() => {
 		if (email !== '') {
-			if (!reg.test(email)) {
-				setError(true);
-			} else setError(false);
+			setError(!reg.test(email));
 		}
 	}, [email]);
-	const handleLogin = async () => {
+
+	const handleLogin = async (e: React.FormEvent) => {
+		e.preventDefault(); // Предотвращаем перезагрузку страницы
 		try {
 			await authUser(email, password, () => navigate('/'));
 		} catch (error) {
 			console.log(error);
 		}
 	};
+
 	return (
 		<>
 			<AppHeader />
@@ -38,30 +40,33 @@ export const LoginPage = () => {
 					<div className={styles.info_container}>
 						<div className={containerStyles.content_container}>
 							<p className='text text_type_main-medium'>Вход</p>
-							<Input
-								type={'text'}
-								placeholder={'E-mail'}
-								onChange={(e) => setEmail(e.target.value)}
-								value={email}
-								name={'name'}
-								errorText={error ? 'Введите корректный E-mail' : ''}
-								error={error}
-								size={'default'}
-								extraClass='ml-1'
-							/>
-							<PasswordInput
-								onChange={(e) => setPassword(e.target.value)}
-								value={password}
-								name={'Пароль'}
-								extraClass='mb-2'
-							/>
-							<Button
-								htmlType='button'
-								type='primary'
-								size='large'
-								onClick={handleLogin}>
-								Войти
-							</Button>
+							<form
+								onSubmit={handleLogin}
+								className={containerStyles.content_container}>
+								<Input
+									type={'text'}
+									placeholder={'E-mail'}
+									onChange={(e) => setEmail(e.target.value)}
+									value={email}
+									name={'email'}
+									errorText={error ? 'Введите корректный E-mail' : ''}
+									error={error}
+									size={'default'}
+									extraClass='ml-1'
+								/>
+								<PasswordInput
+									onChange={(e) => setPassword(e.target.value)}
+									value={password}
+									name={'password'}
+									extraClass='mb-2'
+								/>
+								<Button
+									htmlType='submit' // Изменено на 'submit'
+									type='primary'
+									size='large'>
+									Войти
+								</Button>
+							</form>
 							<div className={containerStyles.footer_info}>
 								<p className='text text_type_main-default text_color_inactive'>
 									Вы - новый пользователь?{' '}

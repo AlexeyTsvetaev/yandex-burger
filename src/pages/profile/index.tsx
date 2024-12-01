@@ -23,6 +23,7 @@ export const ProfilePage = () => {
 	const [error, setError] = React.useState(false);
 	const location = useLocation();
 	const navigate = useNavigate();
+
 	const handleLogout = async () => {
 		try {
 			await logoutUser(() => navigate('/login'));
@@ -30,6 +31,7 @@ export const ProfilePage = () => {
 			console.log(error);
 		}
 	};
+
 	const getUser = async () => {
 		try {
 			const response = await getUserData();
@@ -42,11 +44,13 @@ export const ProfilePage = () => {
 			console.log(error);
 		}
 	};
+
 	useEffect(() => {
 		getUser();
 	}, []);
 
-	const handleEditUser = async () => {
+	const handleEditUser = async (e: React.FormEvent) => {
+		e.preventDefault(); // Предотвращаем перезагрузку страницы при отправке формы
 		try {
 			const response = await updateUserData({
 				email: email,
@@ -103,57 +107,59 @@ export const ProfilePage = () => {
 											Выход
 										</p>
 									</div>
-									<div className={profileStyles.profile_info}>
-										<Input
-											onChange={(e) => setName(e.target.value)}
-											value={name}
-											disabled={nameEdit}
-											onIconClick={() => setNameEdit(false)}
-											placeholder={'Имя'}
-											icon={'EditIcon'}
-										/>
-										<Input
-											onChange={(e) => setEmail(e.target.value)}
-											onIconClick={() => setEmailEdit(false)}
-											disabled={emailEdit}
-											value={email}
-											placeholder={'Логин'}
-											icon={'EditIcon'}
-										/>
-										<Input
-											onChange={(e) => setPassword(e.target.value)}
-											value={password}
-											disabled={passwordEdit}
-											type='password'
-											onIconClick={() => setPasswordEdit(false)}
-											icon={'EditIcon'}
-											placeholder={'Пароль'}
-										/>
-										<div className={profileStyles.profile_info_buttons}>
-											{(!emailEdit || !nameEdit || !passwordEdit) && (
-												<>
-													<Button
-														htmlType='button'
-														type='primary'
-														size='large'
-														onClick={handleEditUser}>
-														Сохранить
-													</Button>
-													<Button
-														onClick={() => {
-															setEmailEdit(true);
-															setNameEdit(true);
-															setPasswordEdit(true);
-														}}
-														htmlType='button'
-														type='secondary'
-														size='medium'>
-														Отменить
-													</Button>
-												</>
-											)}
+									{/* Форма редактирования данных пользователя */}
+									<form onSubmit={handleEditUser}>
+										<div className={profileStyles.profile_info}>
+											<Input
+												onChange={(e) => setName(e.target.value)}
+												value={name}
+												disabled={nameEdit}
+												onIconClick={() => setNameEdit(false)}
+												placeholder={'Имя'}
+												icon={'EditIcon'}
+											/>
+											<Input
+												onChange={(e) => setEmail(e.target.value)}
+												onIconClick={() => setEmailEdit(false)}
+												disabled={emailEdit}
+												value={email}
+												placeholder={'Логин'}
+												icon={'EditIcon'}
+											/>
+											<Input
+												onChange={(e) => setPassword(e.target.value)}
+												value={password}
+												disabled={passwordEdit}
+												type='password'
+												onIconClick={() => setPasswordEdit(false)}
+												icon={'EditIcon'}
+												placeholder={'Пароль'}
+											/>
+											<div className={profileStyles.profile_info_buttons}>
+												{(!emailEdit || !nameEdit || !passwordEdit) && (
+													<>
+														<Button
+															htmlType='submit' // Изменено на 'submit'
+															type='primary'
+															size='large'>
+															Сохранить
+														</Button>
+														<Button
+															onClick={() => {
+																setEmailEdit(true);
+																setNameEdit(true);
+																setPasswordEdit(true);
+															}}
+															htmlType='button'
+															type='secondary'
+															size='medium'>
+															Отменить
+														</Button>
+													</>
+												)}
+											</div>
 										</div>
-									</div>
+									</form>
 								</div>
 							</div>
 						</div>
