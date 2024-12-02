@@ -7,7 +7,7 @@ import {
 	Input,
 	PasswordInput,
 } from '@ya.praktikum/react-developer-burger-ui-components';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { reg } from '../../constants/reg-exp-email';
 import { authUser } from '../../services/fetch/auth-user';
 
@@ -23,10 +23,14 @@ export const LoginPage = () => {
 		}
 	}, [email]);
 
+	const location = useLocation();
+
+	const from = location.state?.from?.pathname || '/';
+
 	const handleLogin = async (e: React.FormEvent) => {
-		e.preventDefault(); // Предотвращаем перезагрузку страницы
+		e.preventDefault();
 		try {
-			await authUser(email, password, () => navigate('/'));
+			await authUser(email, password, () => navigate(from, { replace: true }));
 		} catch (error) {
 			console.log(error);
 		}
