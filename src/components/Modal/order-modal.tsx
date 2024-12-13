@@ -3,10 +3,6 @@ import { createPortal } from 'react-dom';
 import styles from './modal.module.css';
 import { ModalOverlay } from './modal-overlay';
 import { CloseIcon } from '@ya.praktikum/react-developer-burger-ui-components';
-import { useParams } from 'react-router-dom';
-import { OrderDetails } from '../IngredientDetails/ingredient-details';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../store'; // Типизация для состояния Redux
 
 interface ModalProps {
 	onClose: () => void;
@@ -16,7 +12,7 @@ interface ModalProps {
 	style?: CSSProperties;
 }
 
-export const Modal: FC<ModalProps> = ({
+export const OrderModal: FC<ModalProps> = ({
 	onClose,
 	open = true,
 	title,
@@ -24,13 +20,6 @@ export const Modal: FC<ModalProps> = ({
 	style = {},
 }) => {
 	const modalRoot = document.getElementById('react-modals');
-	const { id } = useParams();
-
-	// Получаем ингредиенты через useSelector
-	const ingredients = useSelector(
-		(state: RootState) => state.ingredients.ingredients
-	);
-	const data = ingredients.find((e) => e._id === id);
 
 	useEffect(() => {
 		const handleEscButton = (e: KeyboardEvent) => {
@@ -41,11 +30,6 @@ export const Modal: FC<ModalProps> = ({
 			document.removeEventListener('keydown', handleEscButton);
 		};
 	}, [onClose]);
-
-	// Проверка на существование данных
-	if (!data) {
-		return null; // Модальное окно не рендерится, если данных нет
-	}
 
 	return modalRoot
 		? createPortal(
@@ -61,17 +45,6 @@ export const Modal: FC<ModalProps> = ({
 										className={styles.close_icon}
 									/>
 								</div>
-								<OrderDetails
-									name={data.name}
-									image={data.image}
-									calories={data.calories}
-									fat={data.fat}
-									carbohydrates={data.carbohydrates}
-									proteins={data.proteins}
-									price={data.price}
-									_id={data._id}
-									type={data.type}
-								/>
 								{children}
 							</div>
 						</div>

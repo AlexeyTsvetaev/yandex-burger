@@ -1,0 +1,26 @@
+.main_container {
+	display: flex;
+	height: 100%;
+}
+.tabs {
+	width: 320px;
+	display: flex;
+	flex-direction: column;
+	gap: 20px
+}
+
+.profile_info {
+	display: flex;
+	width: 480px;
+	flex-direction: column;
+	gap: 20px;
+	margin-left: 80px;
+}
+
+.profile_info_buttons {
+	display: flex;
+	flex-direction: row;
+	gap: 20px;
+	width: 100%;
+
+}

@@ -55,7 +55,6 @@ const ingredientsSlice = createSlice({
 		},
 	},
 });
-
 export const {
 	setIngredients,
 	setViewedIngredient,

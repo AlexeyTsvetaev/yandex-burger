@@ -3,3 +3,12 @@ body {
 	padding: 0;
 	background-color: #131316;
 }
+
+a {
+	text-decoration: none;
+	color: inherit;
+}
+
+nav {
+	cursor: pointer;
+}

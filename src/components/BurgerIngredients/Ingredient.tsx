@@ -10,6 +10,8 @@ import { useModal } from '../../hooks/use-modal';
 import { useDrag } from 'react-dnd';
 import { useDispatch } from 'react-redux';
 import { setViewedIngredient } from '../../services/reducers/ingredients-slice';
+import { useLocation, useNavigate } from 'react-router';
+import { Link } from 'react-router-dom';
 export interface IIngredients {
 	_id: string;
 	name: string;
@@ -36,6 +38,8 @@ export const Ingredient: FC<IIngredients> = ({
 	count,
 }) => {
 	const { isModalOpen, openModal, closeModal } = useModal();
+	const navigate = useNavigate();
+	const location = useLocation();
 	const [, dragRef] = useDrag({
 		type: 'ingredient',
 		item: { _id, name, price, image, type },
@@ -61,36 +65,42 @@ export const Ingredient: FC<IIngredients> = ({
 					/>
 				</Modal>
 			)}
-			<div
-				ref={dragRef}
-				className={styles.ingredient_item}
+			<Link
 				key={_id}
-				onClick={() => {
-					openModal(),
-						dispatch(
-							setViewedIngredient({
-								_id: _id,
-								name: name,
-								type: type,
-								fat: fat,
-								calories: calories,
-								carbohydrates: carbohydrates,
-								image: image,
-								price: price,
-								proteins: proteins,
-							})
-						);
-				}}>
-				<div>{count && <Counter count={count} extraClass='m-1' />}</div>
-				<img className={styles.img_item} src={image} alt={name} />
-				<div className={styles.price_block}>
-					<p className='text text_type_digits-default'>{price}</p>
-					<CurrencyIcon type='primary' />
+				to={`/ingredients/${_id}`}
+				state={{ background: location }}>
+				<div
+					ref={dragRef}
+					className={styles.ingredient_item}
+					key={_id}
+					onClick={() => {
+						openModal(),
+							// navigate(`/ingredients/${_id}`)
+							dispatch(
+								setViewedIngredient({
+									_id: _id,
+									name: name,
+									type: type,
+									fat: fat,
+									calories: calories,
+									carbohydrates: carbohydrates,
+									image: image,
+									price: price,
+									proteins: proteins,
+								})
+							);
+					}}>
+					<div>{count && <Counter count={count} extraClass='m-1' />}</div>
+					<img className={styles.img_item} src={image} alt={name} />
+					<div className={styles.price_block}>
+						<p className='text text_type_digits-default'>{price}</p>
+						<CurrencyIcon type='primary' />
+					</div>
+					<p className={`${styles.text_center} text text_type_main-small`}>
+						{name}
+					</p>
 				</div>
-				<p className={`${styles.text_center} text text_type_main-small`}>
-					{name}
-				</p>
-			</div>
+			</Link>
 		</>
 	);
 };
