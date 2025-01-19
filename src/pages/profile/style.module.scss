@@ -1,17 +1,23 @@
 .main_container {
 	display: flex;
-	height: 100%;
+	height: 100vh;
+	width: 100vh;
+	justify-content: center;
+	align-items: center;
 }
 .tabs {
 	width: 320px;
 	display: flex;
 	flex-direction: column;
 	gap: 20px
+
 }
 
 .profile_info {
 	display: flex;
-	width: 480px;
+	width: 100%;
+	max-width: 800px;
+	max-height: 800px;
 	flex-direction: column;
 	gap: 20px;
 	margin-left: 80px;

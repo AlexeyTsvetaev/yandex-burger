@@ -5,6 +5,7 @@ import {
 	setRefTokenToLocal,
 	setTokenToLocal,
 } from '../../constants/local-storage';
+import { useDispatch } from 'react-redux';
 
 interface AuthRequestBody {
 	email: string;
@@ -29,7 +30,6 @@ export const authUser = async (
 	successCallback: () => void
 ): Promise<void> => {
 	const url = url_auth;
-
 	const requestBody: AuthRequestBody = {
 		email,
 		password,

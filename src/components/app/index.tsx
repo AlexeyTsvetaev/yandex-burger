@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
 	Routes,
 	Route,
@@ -19,21 +19,53 @@ import ErrorBoundary from '../ErrorBoundary';
 import ProtectedRoute from './protected-route';
 import AuthRoute from './auth-route';
 import { Modal } from '../Modal/Modal';
-import { store } from '../../store';
+import { RootState, store } from '../../store';
 import { getTokenToLocal } from '../../constants/local-storage';
-
+import { Feed, IOrders } from '../../pages/feed';
+import {
+	IOrder,
+	WS_CONNECTION_CLOSED,
+	WS_CONNECTION_START,
+	WS_CONNECTION_START_CLIENT,
+} from '../../services/ws/ws-types';
+import { useDispatch, useSelector } from 'react-redux';
+import { useGetIngredientsQuery } from '../../services/rtk-query/api-slice';
+import { setIngredients } from '../../services/reducers/ingredients-slice';
+import { FeedDetails } from '../OrderDetails/feed-details';
+import { FeedDetailPage } from '../../pages/feed/feed-detail-page';
+import { OrderClientDetails } from '../OrderDetails/order-client-details';
+import { OrderDetailsPage } from '../../pages/profile/order-details-page';
 const AppContent = () => {
 	const isAuth = !!getTokenToLocal();
 	const location = useLocation();
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
 	const background = location.state?.background;
 	const ingredients = store
 		.getState()
 		.ingredients.ingredients.filter((e) => e._id === location.pathname);
-	const data = { ...ingredients[0] };
+	const dataIng = { ...ingredients[0] };
 	const handleModalClose = () => {
 		navigate(-1); // Закрытие модалки возвращает на предыдущую страницу
 	};
+	useEffect(() => {
+		if (isAuth) dispatch({ type: WS_CONNECTION_START_CLIENT });
+		// Подключаемся к WebSocket при монтировании компонента
+		dispatch({ type: WS_CONNECTION_START });
+
+		return () => {
+			// Закрываем соединение при размонтировании компонента
+			dispatch({ type: WS_CONNECTION_CLOSED });
+		};
+	}, [dispatch]);
+
+	const { data, isLoading, error } = useGetIngredientsQuery();
+
+	useEffect(() => {
+		if (data && data.success) {
+			dispatch(setIngredients(data.data));
+		}
+	}, [data, dispatch]);
 
 	return (
 		<ErrorBoundary>
@@ -41,10 +73,14 @@ const AppContent = () => {
 				{/* Основные маршруты */}
 				<Route path='/' element={<MainPage />} />
 				<Route path='/ingredients/:id' element={<IngredientsInfoPage />} />
+				<Route path={'/feed'} element={<Feed />} />
+				<Route path={'/feed/:id'} element={<FeedDetailPage />} />
 
 				{/* Защищённые маршруты */}
 				<Route element={<ProtectedRoute isAuth={isAuth} />}>
 					<Route path='/profile' element={<ProfilePage />} />
+					<Route path='/profile/orders' element={<ProfilePage />} />
+					<Route path={'/profile/orders/:id'} element={<OrderDetailsPage />} />
 				</Route>
 
 				{/* Для неавторизованных пользователей */}
@@ -71,7 +107,7 @@ const AppContent = () => {
 			</Routes>
 
 			{/* Модалка для ингредиентов */}
-			{background && data && (
+			{background && dataIng && (
 				<Routes>
 					<Route
 						path='/ingredients/:id'
@@ -92,6 +128,30 @@ const AppContent = () => {
 								{/*	type={data.type}*/}
 								{/*/>*/}
 							</Modal>
+						}
+					/>
+				</Routes>
+			)}
+			{/* Модалка для feed */}
+			{background && dataIng && (
+				<Routes>
+					<Route
+						path='/feed/:id'
+						element={
+							<FeedDetails onClose={handleModalClose} open={true}></FeedDetails>
+						}
+					/>
+				</Routes>
+			)}
+			{/*модалка для заказов клиента*/}
+			{background && dataIng && (
+				<Routes>
+					<Route
+						path='profile/orders/:id'
+						element={
+							<OrderClientDetails
+								onClose={handleModalClose}
+								open={true}></OrderClientDetails>
 						}
 					/>
 				</Routes>

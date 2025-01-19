@@ -28,14 +28,14 @@ export const AppHeader: FC = () => {
 						<p className='text text_type_main-default'>Конструктор</p>
 					</nav>
 					<nav
-						onClick={() => navigate('/orders')}
+						onClick={() => navigate('/feed')}
 						className={
-							location.pathname === '/orders'
+							location.pathname === '/feed'
 								? styles.button_primary
 								: styles.button_secondary
 						}>
 						<ListIcon
-							type={location.pathname === '/orders' ? 'primary' : 'secondary'}
+							type={location.pathname === '/feed' ? 'primary' : 'secondary'}
 						/>
 						<p className='text text_type_main-default'>Лента заказов</p>
 					</nav>

@@ -11,6 +11,7 @@ import { useLocation, useNavigate } from 'react-router';
 import { logoutUser } from '../../services/fetch/logout';
 import { getUserData } from '../../services/fetch/get-user';
 import { updateUserData } from '../../services/fetch/patch-user';
+import { Orders } from './orders';
 
 export const ProfilePage = () => {
 	const [isLoading, setIsLoading] = React.useState(true);
@@ -108,58 +109,64 @@ export const ProfilePage = () => {
 										</p>
 									</div>
 									{/* Форма редактирования данных пользователя */}
-									<form onSubmit={handleEditUser}>
+									{location.pathname === '/profile/orders' ? (
 										<div className={profileStyles.profile_info}>
-											<Input
-												onChange={(e) => setName(e.target.value)}
-												value={name}
-												disabled={nameEdit}
-												onIconClick={() => setNameEdit(false)}
-												placeholder={'Имя'}
-												icon={'EditIcon'}
-											/>
-											<Input
-												onChange={(e) => setEmail(e.target.value)}
-												onIconClick={() => setEmailEdit(false)}
-												disabled={emailEdit}
-												value={email}
-												placeholder={'Логин'}
-												icon={'EditIcon'}
-											/>
-											<Input
-												onChange={(e) => setPassword(e.target.value)}
-												value={password}
-												disabled={passwordEdit}
-												type='password'
-												onIconClick={() => setPasswordEdit(false)}
-												icon={'EditIcon'}
-												placeholder={'Пароль'}
-											/>
-											<div className={profileStyles.profile_info_buttons}>
-												{(!emailEdit || !nameEdit || !passwordEdit) && (
-													<>
-														<Button
-															htmlType='submit' // Изменено на 'submit'
-															type='primary'
-															size='large'>
-															Сохранить
-														</Button>
-														<Button
-															onClick={() => {
-																setEmailEdit(true);
-																setNameEdit(true);
-																setPasswordEdit(true);
-															}}
-															htmlType='button'
-															type='secondary'
-															size='medium'>
-															Отменить
-														</Button>
-													</>
-												)}
-											</div>
+											<Orders />
 										</div>
-									</form>
+									) : (
+										<form onSubmit={handleEditUser}>
+											<div className={profileStyles.profile_info}>
+												<Input
+													onChange={(e) => setName(e.target.value)}
+													value={name}
+													disabled={nameEdit}
+													onIconClick={() => setNameEdit(false)}
+													placeholder={'Имя'}
+													icon={'EditIcon'}
+												/>
+												<Input
+													onChange={(e) => setEmail(e.target.value)}
+													onIconClick={() => setEmailEdit(false)}
+													disabled={emailEdit}
+													value={email}
+													placeholder={'Логин'}
+													icon={'EditIcon'}
+												/>
+												<Input
+													onChange={(e) => setPassword(e.target.value)}
+													value={password}
+													disabled={passwordEdit}
+													type='password'
+													onIconClick={() => setPasswordEdit(false)}
+													icon={'EditIcon'}
+													placeholder={'Пароль'}
+												/>
+												<div className={profileStyles.profile_info_buttons}>
+													{(!emailEdit || !nameEdit || !passwordEdit) && (
+														<>
+															<Button
+																htmlType='submit' // Изменено на 'submit'
+																type='primary'
+																size='large'>
+																Сохранить
+															</Button>
+															<Button
+																onClick={() => {
+																	setEmailEdit(true);
+																	setNameEdit(true);
+																	setPasswordEdit(true);
+																}}
+																htmlType='button'
+																type='secondary'
+																size='medium'>
+																Отменить
+															</Button>
+														</>
+													)}
+												</div>
+											</div>
+										</form>
+									)}
 								</div>
 							</div>
 						</div>
