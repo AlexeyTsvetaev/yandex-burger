@@ -40,7 +40,6 @@ export const IngredientsInfoPage = () => {
 
 	return (
 		<>
-			<AppHeader />
 			<div className={containerStyles.container}>
 				<div className={styles.modal_container}>
 					<img src={data.image} alt={data.name} className={styles.image} />

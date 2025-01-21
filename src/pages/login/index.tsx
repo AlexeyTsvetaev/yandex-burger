@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import styles from '../../components/BurgerIngredients/burger-ingredients.module.css';
-import { AppHeader } from '../../components/AppHeader/app-header';
 import containerStyles from './index.module.scss';
 import {
 	Button,
@@ -16,7 +15,6 @@ export const LoginPage = () => {
 	const [password, setPassword] = React.useState('');
 	const [error, setError] = React.useState(false);
 	const navigate = useNavigate();
-
 	useEffect(() => {
 		if (email !== '') {
 			setError(!reg.test(email));
@@ -30,7 +28,9 @@ export const LoginPage = () => {
 	const handleLogin = async (e: React.FormEvent) => {
 		e.preventDefault();
 		try {
-			await authUser(email, password, () => navigate(from, { replace: true }));
+			await authUser(email, password, () => {
+				navigate(from, { replace: true });
+			});
 		} catch (error) {
 			console.log(error);
 		}
@@ -38,7 +38,6 @@ export const LoginPage = () => {
 
 	return (
 		<>
-			<AppHeader />
 			<div className={containerStyles.container}>
 				<div className={styles.modal_container}>
 					<div className={styles.info_container}>
@@ -64,10 +63,7 @@ export const LoginPage = () => {
 									name={'password'}
 									extraClass='mb-2'
 								/>
-								<Button
-									htmlType='submit' // Изменено на 'submit'
-									type='primary'
-									size='large'>
+								<Button htmlType='submit' type='primary' size='large'>
 									Войти
 								</Button>
 							</form>

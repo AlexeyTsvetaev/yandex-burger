@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
+import styles from '../../pages/feed/style.module.css';
 import {
 	Routes,
 	Route,
 	useLocation,
 	useNavigate,
 	Navigate,
-	useParams,
 } from 'react-router-dom';
 import { MainPage } from '../../pages/main-page';
 import { IngredientsInfoPage } from '../../pages/ingredients-info-page';
@@ -19,84 +19,144 @@ import ErrorBoundary from '../ErrorBoundary';
 import ProtectedRoute from './protected-route';
 import AuthRoute from './auth-route';
 import { Modal } from '../Modal/Modal';
-import { store } from '../../store';
 import { getTokenToLocal } from '../../constants/local-storage';
+import { Feed } from '../../pages/feed';
+
+import { useDispatch } from '../../store';
+import { useGetIngredientsQuery } from '../../services/rtk-query/api-slice';
+import { setIngredients } from '../../services/reducers/ingredients-slice';
+import { FeedDetails } from '../OrderDetails/feed-details';
+import { FeedDetailPage } from '../../pages/feed/feed-detail-page';
+import { OrderClientDetails } from '../OrderDetails/order-client-details';
+import { OrderDetailsPage } from '../../pages/profile/order-details-page';
+import { OrderDetails } from '../IngredientDetails/ingredient-details';
+import { AppHeader } from '../AppHeader/app-header';
+import { useSelector } from '../../store';
 
 const AppContent = () => {
+	const dispatch = useDispatch();
+
+	const { data, isLoading, error } = useGetIngredientsQuery();
+
+	useEffect(() => {
+		if (data && data.success) {
+			dispatch(setIngredients(data.data));
+		}
+	}, [data, dispatch]);
+
 	const isAuth = !!getTokenToLocal();
 	const location = useLocation();
 	const navigate = useNavigate();
+	const ingredients = useSelector(
+		(state) => state.ingredients.ingredients
+	).filter((e) => e._id === location.pathname);
+
 	const background = location.state?.background;
-	const ingredients = store
-		.getState()
-		.ingredients.ingredients.filter((e) => e._id === location.pathname);
-	const data = { ...ingredients[0] };
+
+	const dataIng = { ...ingredients[0] };
 	const handleModalClose = () => {
 		navigate(-1); // Закрытие модалки возвращает на предыдущую страницу
 	};
 
 	return (
-		<ErrorBoundary>
-			<Routes location={background || location}>
-				{/* Основные маршруты */}
-				<Route path='/' element={<MainPage />} />
-				<Route path='/ingredients/:id' element={<IngredientsInfoPage />} />
+		<>
+			{isLoading ? (
+				<div className={styles.preloader}>Загружаю ингредиенты...</div>
+			) : error ? (
+				<div className={styles.preloader}>
+					Не могу загрузить ингредиенты, обнови страницу
+				</div>
+			) : (
+				<AppHeader />
+			)}
 
-				{/* Защищённые маршруты */}
-				<Route element={<ProtectedRoute isAuth={isAuth} />}>
-					<Route path='/profile' element={<ProfilePage />} />
-				</Route>
+			<ErrorBoundary>
+				<Routes location={background || location}>
+					{/* Основные маршруты */}
+					<Route path='/' element={<MainPage />} />
+					<Route path='/ingredients/:id' element={<IngredientsInfoPage />} />
+					<Route path={'/feed'} element={<Feed />} />
+					<Route path={'/feed/:id'} element={<FeedDetailPage />} />
 
-				{/* Для неавторизованных пользователей */}
-				<Route element={<AuthRoute isAuth={isAuth} />}>
-					<Route path='/login' element={<LoginPage />} />
-					<Route path='/register' element={<RegisterPage />} />
-					<Route path='/forgot-password' element={<ForgotPasswordPage />} />
-				</Route>
+					{/* Защищённые маршруты */}
+					<Route element={<ProtectedRoute isAuth={isAuth} />}>
+						<Route path='/profile' element={<ProfilePage />} />
+						<Route path='/profile/orders' element={<ProfilePage />} />
+						<Route
+							path={'/profile/orders/:id'}
+							element={<OrderDetailsPage />}
+						/>
+					</Route>
 
-				{/* Специальная защита для reset-password */}
-				<Route
-					path='/reset-password'
-					element={
-						location.state?.fromForgotPassword ? (
-							<ResetPasswordPage />
-						) : (
-							<Navigate to='/forgot-password' replace />
-						)
-					}
-				/>
+					{/* Для неавторизованных пользователей */}
+					<Route element={<AuthRoute isAuth={isAuth} />}>
+						<Route path='/login' element={<LoginPage />} />
+						<Route path='/register' element={<RegisterPage />} />
+						<Route path='/forgot-password' element={<ForgotPasswordPage />} />
+					</Route>
 
-				{/* 404 страница */}
-				<Route path='*' element={<Error404 />} />
-			</Routes>
-
-			{/* Модалка для ингредиентов */}
-			{background && data && (
-				<Routes>
+					{/* Специальная защита для reset-password */}
 					<Route
-						path='/ingredients/:id'
+						path='/reset-password'
 						element={
-							<Modal
-								onClose={handleModalClose}
-								open={true}
-								title='Детали ингредиента'>
-								{/*<OrderDetails*/}
-								{/*	name={data.name}*/}
-								{/*	image={data.image}*/}
-								{/*	calories={data.calories}*/}
-								{/*	fat={data.fat}*/}
-								{/*	carbohydrates={data.carbohydrates}*/}
-								{/*	proteins={data.proteins}*/}
-								{/*	price={data.price}*/}
-								{/*	_id={data._id}*/}
-								{/*	type={data.type}*/}
-								{/*/>*/}
-							</Modal>
+							location.state?.fromForgotPassword ? (
+								<ResetPasswordPage />
+							) : (
+								<Navigate to='/forgot-password' replace />
+							)
 						}
 					/>
+
+					{/* 404 страница */}
+					<Route path='*' element={<Error404 />} />
 				</Routes>
-			)}
-		</ErrorBoundary>
+
+				{/* Модалка для ингредиентов */}
+				{background && dataIng && (
+					<Routes>
+						<Route
+							path='/ingredients/:id'
+							element={
+								<Modal
+									onClose={handleModalClose}
+									open={true}
+									title='Детали ингредиента'>
+									<OrderDetails />
+								</Modal>
+							}
+						/>
+					</Routes>
+				)}
+
+				{/* Модалка для feed */}
+				{background && dataIng && (
+					<Routes>
+						<Route
+							path='/feed/:id'
+							element={
+								<Modal onClose={handleModalClose} title={''} open={true}>
+									<FeedDetails />
+								</Modal>
+							}
+						/>
+					</Routes>
+				)}
+
+				{/*модалка для заказов клиента*/}
+				{background && dataIng && (
+					<Routes>
+						<Route
+							path='profile/orders/:id'
+							element={
+								<Modal onClose={handleModalClose} open={true} title={''}>
+									<OrderClientDetails />
+								</Modal>
+							}
+						/>
+					</Routes>
+				)}
+			</ErrorBoundary>
+		</>
 	);
 };
 

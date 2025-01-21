@@ -5,9 +5,7 @@ import {
 import React, { FC, useEffect, useRef, useState } from 'react';
 import styles from './burger-ingredients.module.css';
 import { IIngredients, Ingredient } from './Ingredient';
-import { v4 as uuidv4 } from 'uuid';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../store';
+import { useSelector } from '../../store';
 
 export const BurgerIngredients: FC = () => {
 	const [current, setCurrent] = useState('one');
@@ -15,13 +13,13 @@ export const BurgerIngredients: FC = () => {
 	const bunsRef = useRef<HTMLDivElement>(null);
 	const saucesRef = useRef<HTMLDivElement>(null);
 	const mainsRef = useRef<HTMLDivElement>(null);
-	const data = useSelector((state: RootState) => state.ingredients.ingredients);
+	const data = useSelector((state) => state.ingredients.ingredients);
 
 	const buns = data.filter((item: IIngredients) => item.type === 'bun');
 	const sauces = data.filter((item: IIngredients) => item.type === 'sauce');
 	const mains = data.filter((item: IIngredients) => item.type === 'main');
 	const countIngredient = useSelector(
-		(state: RootState) => state.ingredients.burgerConstructor
+		(state) => state.ingredients.burgerConstructor
 	);
 	const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => {
 		if (ref.current) {
@@ -117,7 +115,7 @@ export const BurgerIngredients: FC = () => {
 					<div className={styles.bread_container}>
 						{buns.map((item) => (
 							<Ingredient
-								key={uuidv4()}
+								key={item._id}
 								name={item.name}
 								price={item.price}
 								image={item.image}
@@ -138,7 +136,7 @@ export const BurgerIngredients: FC = () => {
 					<div className={styles.bread_container}>
 						{sauces.map((item) => (
 							<Ingredient
-								key={uuidv4()}
+								key={item._id}
 								name={item.name}
 								price={item.price}
 								image={item.image}
@@ -159,7 +157,7 @@ export const BurgerIngredients: FC = () => {
 					<div className={styles.bread_container}>
 						{mains.map((item) => (
 							<Ingredient
-								key={uuidv4()}
+								key={item._id}
 								name={item.name}
 								price={item.price}
 								image={item.image}

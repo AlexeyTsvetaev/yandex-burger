@@ -11,11 +11,12 @@ import { OrderDetails } from '../OrderDetails/order-details';
 import { IIngredients } from '../BurgerIngredients/Ingredient';
 import { useModal } from '../../hooks/use-modal';
 import { useDrop, useDrag } from 'react-dnd';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from '../../store';
 import {
 	removeItemFromConstructor,
 	moveItemInConstructor,
 	addItemToConstructorWithUuid,
+	clearConstructor,
 } from '../../services/reducers/ingredients-slice';
 import { RootState } from '../../store';
 import { ICreateOrderResponse } from '../../types/ingredients';
@@ -60,6 +61,7 @@ export const BurgerConstructor: FC = () => {
 			const response = await createOrder(orderData).unwrap();
 			setOrderData(response);
 			openModal();
+			dispatch(clearConstructor());
 		} catch (error) {
 			console.error('Failed to create order:', error);
 		}
