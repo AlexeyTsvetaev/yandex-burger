@@ -1,37 +1,46 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import styles from '../../components/OrderDetails/order-details.module.css';
 import {
 	CurrencyIcon,
 	FormattedDate,
 } from '@ya.praktikum/react-developer-burger-ui-components';
 import { useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../store';
-import { AppHeader } from '../../components/AppHeader/app-header';
+import { useDispatch, useSelector } from '../../store';
+import { getMessage, getWebsocketStatus } from '../../services/ws/ws-slice';
+import { IWSMessage } from '../../services/ws/ws-types';
+import { wsConnect } from '../../services/ws/ws-actions';
+import { ClientOrders } from '../../constants/wsUrls';
+import { useOrdersWs } from '../../hooks/use-orders-client';
 export interface OrderDetails {
 	onClose: () => void;
 	open: boolean;
 }
 export const OrderDetailsPage: FC = () => {
 	const { id } = useParams(); // Получаем orderId из URL
-	// Получаем список ингредиентов с их количеством
-	const ingredientsDetails = useSelector(
-		(state: RootState) => state.ingredients.ingredients
-	);
-	// Получаем все заказы
-	const orders = useSelector(
-		(state: RootState) => state.websocket.clientOrders
-	);
-
-	// Находим нужный заказ по id
-	const order = orders?.orders.find((order) => order._id === id);
-
-	if (!order) {
+	const dispatch = useDispatch();
+	const { ingredients, ordersWs, filteredOrders, isConnectedWs } =
+		useOrdersWs(ClientOrders);
+	if (!isConnectedWs || !ordersWs) {
 		return (
 			<div className={styles.preloader}>
-				<p className='text text_type_main-medium'>Загружаю заказ..</p>
+				<p className='text text_type_main-medium'>Загружаю заказы...</p>
 			</div>
 		);
+	}
+
+	if (!isConnectedWs) {
+		return (
+			<div className={styles.preloader}>
+				<p className='text text_type_main-medium'>Загружаю заказы...</p>
+			</div>
+		);
+	}
+
+	// Находим нужный заказ по id
+	const order = ordersWs?.orders.find((order) => order._id === id);
+
+	if (!order) {
+		return <div className={styles.preloader}></div>;
 	}
 
 	// Извлекаем данные
@@ -44,7 +53,7 @@ export const OrderDetailsPage: FC = () => {
 
 	// Группируем ингредиенты по _id и считаем их количество
 	order.ingredients.forEach((id) => {
-		const ingredient = ingredientsDetails.find((item) => item._id === id);
+		const ingredient = ingredients.find((item) => item._id === id);
 		if (ingredient) {
 			if (!ingredientMap[id]) {
 				ingredientMap[id] = {
@@ -67,7 +76,6 @@ export const OrderDetailsPage: FC = () => {
 
 	return (
 		<>
-			<AppHeader />
 			<div className={styles.container_details}>
 				<div className={styles.container_info_details}>
 					<div className={styles.number}>

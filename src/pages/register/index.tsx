@@ -40,7 +40,6 @@ export const RegisterPage = () => {
 
 	return (
 		<>
-			<AppHeader />
 			<div className={containerStyles.container}>
 				<div className={styles.modal_container}>
 					<div className={styles.info_container}>

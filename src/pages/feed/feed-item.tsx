@@ -35,7 +35,7 @@ export const FeedItem: FC<IFeedItem> = ({
 	return (
 		<div className={styles.feed_item_container} onClick={onClick}>
 			<div className={styles.feed_item_container_feed_number}>
-				<p className='text text_type_digits-default'>{feedNumber}</p>
+				<p className='text text_type_digits-default'>#{feedNumber}</p>
 				<p className='text text_type_main-default text_color_inactive'>
 					<FormattedDate date={new Date(feedDate)} />
 				</p>

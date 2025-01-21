@@ -1,55 +1,111 @@
-import type { Middleware, MiddlewareAPI } from 'redux';
+import {
+	ActionCreatorWithoutPayload,
+	ActionCreatorWithPayload,
+	Middleware,
+} from '@reduxjs/toolkit';
+import { RootState } from '../../store';
+import { refreshToken } from '../fetch/fetch';
+import { wsConnect, wsDisconnect } from './ws-actions';
 
-import type { AppDispatch, RootState } from '../../store';
-import { AppActions, IWSMessage } from './ws-types';
-import { wsActions } from './ws-slice';
+export type TWsActionTypes = {
+	connect: ActionCreatorWithPayload<string>;
+	disconnect: ActionCreatorWithoutPayload;
+	onConnecting: ActionCreatorWithoutPayload;
+	onOpen: ActionCreatorWithoutPayload;
+	onClose: ActionCreatorWithoutPayload;
+	onError: ActionCreatorWithPayload<string>;
+	onMessage: ActionCreatorWithPayload<string>;
+};
 
-export const socketMiddleware = (wsUrl: string): Middleware => {
-	return ((store: MiddlewareAPI<AppDispatch, RootState>) => {
+const RECONNECT_PERIOD = 3000;
+
+export const socketMiddleware = (
+	wsActions: TWsActionTypes,
+	withTokenRefresh: boolean = true
+): Middleware<{}, RootState> => {
+	return (store) => {
 		let socket: WebSocket | null = null;
+		const {
+			connect,
+			onOpen,
+			onClose,
+			onError,
+			onMessage,
+			onConnecting,
+			disconnect,
+		} = wsActions;
+		let isConnected = false;
+		let reconnectTimer = 0;
+		let url = '';
 
-		return (next) => (action: AppActions) => {
-			const { dispatch, getState } = store;
-			const { type, payload } = action;
+		return (next) => (action) => {
+			const { dispatch } = store;
+			if (connect.match(action)) {
+				url = action.payload;
+				socket = new WebSocket(url);
+				isConnected = true;
+				dispatch(onConnecting());
 
-			if (type === 'WS_CONNECTION_START') {
-				//создаем сокет соединение
-				socket = new WebSocket(wsUrl);
-			}
-			if (socket) {
-				// функция, которая вызывается при открытии сокета
 				socket.onopen = () => {
-					dispatch({ type: 'WS_CONNECTION_SUCCESS' });
-					dispatch(wsActions.connected());
+					dispatch(onOpen());
 				};
 
-				// функция, которая вызывается при ошибке соединения
-				socket.onerror = (event) => {
-					dispatch(wsActions.error('Ошибка соединения'));
-					dispatch({ type: 'WS_CONNECTION_ERROR', payload: event });
+				socket.onerror = () => {
+					dispatch(onError('Error'));
 				};
 
-				// функция, которая вызывается при получения события от сервера
 				socket.onmessage = (event) => {
+					const { data } = event;
+
 					try {
-						const message: IWSMessage = JSON.parse(event.data); // Парсим данные от сервера
-						dispatch(wsActions.messageReceived(message)); // Отправляем в Redux
+						const parsedData = JSON.parse(data);
+
+						if (
+							withTokenRefresh &&
+							parsedData.message === 'Invalid or missing token'
+						) {
+							refreshToken()
+								.then((refreshData) => {
+									const wssUrl = new URL(url);
+									wssUrl.searchParams.set(
+										'token',
+										refreshData.accessToken.replace('Bearer ', '')
+									);
+									dispatch(wsConnect(wssUrl.toString()));
+								})
+								.catch((err) => {
+									console.error(err);
+									dispatch(onError('Error'));
+								});
+
+							return;
+						}
+
+						dispatch(onMessage(data));
 					} catch (error) {
-						console.error('Ошибка при парсинге сообщения', error);
+						dispatch(onError((error as { message: string }).message));
 					}
 				};
-				// функция, которая вызывается при закрытии соединения
-				socket.onclose = (event) => {
-					dispatch({ type: 'WS_CONNECTION_CLOSED', payload: event });
-				};
 
-				if (type === 'WS_SEND_MESSAGE') {
-					// функция для отправки сообщения на сервер
-					socket.send(JSON.stringify(payload));
-				}
+				socket.onclose = () => {
+					dispatch(onClose());
+					if (isConnected) {
+						reconnectTimer = window.setTimeout(() => {
+							dispatch(connect(url));
+						}, RECONNECT_PERIOD);
+					}
+				};
+			}
+
+			if (socket && disconnect.match(action)) {
+				clearTimeout(reconnectTimer);
+				isConnected = false;
+				reconnectTimer = 0;
+				socket.close();
+				socket = null;
 			}
 
 			next(action);
 		};
-	}) as Middleware;
+	};
 };

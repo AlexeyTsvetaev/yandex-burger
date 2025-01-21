@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import styles from '../../components/BurgerIngredients/burger-ingredients.module.css';
-import { AppHeader } from '../../components/AppHeader/app-header';
 import containerStyles from './index.module.scss';
 import {
 	Button,
@@ -10,16 +9,12 @@ import {
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { reg } from '../../constants/reg-exp-email';
 import { authUser } from '../../services/fetch/auth-user';
-import { useDispatch } from 'react-redux';
-import { wsActions } from '../../services/ws/ws-slice';
-import { WS_CONNECTION_START_CLIENT } from '../../services/ws/ws-types';
 
 export const LoginPage = () => {
 	const [email, setEmail] = React.useState('');
 	const [password, setPassword] = React.useState('');
 	const [error, setError] = React.useState(false);
 	const navigate = useNavigate();
-	const dispatch = useDispatch();
 	useEffect(() => {
 		if (email !== '') {
 			setError(!reg.test(email));
@@ -35,7 +30,7 @@ export const LoginPage = () => {
 		try {
 			await authUser(email, password, () => {
 				navigate(from, { replace: true });
-			}).then(() => dispatch({ type: WS_CONNECTION_START_CLIENT }));
+			});
 		} catch (error) {
 			console.log(error);
 		}
@@ -43,7 +38,6 @@ export const LoginPage = () => {
 
 	return (
 		<>
-			<AppHeader />
 			<div className={containerStyles.container}>
 				<div className={styles.modal_container}>
 					<div className={styles.info_container}>

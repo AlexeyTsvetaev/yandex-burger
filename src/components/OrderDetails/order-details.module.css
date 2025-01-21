@@ -70,9 +70,9 @@
 	flex-direction: column;
 	gap:10px;
 	width: 100%;
-	max-height: 300px;
+	max-height: 250px;
 	margin-top: 20px;
-	overflow: auto;
+	overflow-y: auto;
 }
 
 .ingredientItem {

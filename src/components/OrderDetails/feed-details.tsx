@@ -1,41 +1,58 @@
-import { ReactComponent as Done } from '../../static/images/done.svg';
-import React, { FC, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './order-details.module.css';
 import {
-	CloseIcon,
 	CurrencyIcon,
 	FormattedDate,
 } from '@ya.praktikum/react-developer-burger-ui-components';
-import { useLocation, useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../store';
-import { createPortal } from 'react-dom';
-import { ModalOverlay } from '../Modal/modal-overlay';
-export interface OrderDetails {
-	onClose: () => void;
-	open: boolean;
-}
-export const FeedDetails: FC<OrderDetails> = ({ onClose, open }) => {
-	const modalRoot = document.getElementById('react-modals');
+import { useParams } from 'react-router-dom';
+import { useSelector } from '../../store/';
+import { useDispatch } from '../../store';
+import { getMessage, getWebsocketStatus } from '../../services/ws/ws-slice';
+import { IWSMessage } from '../../services/ws/ws-types';
+import { wsConnect } from '../../services/ws/ws-actions';
+import { OrdersAll } from '../../constants/wsUrls';
+export const FeedDetails = () => {
 	const { id } = useParams(); // Получаем orderId из URL
+	const dispatch = useDispatch();
+	useEffect(() => {
+		dispatch(wsConnect(OrdersAll));
+	}, [dispatch]);
+
 	// Получаем список ингредиентов с их количеством
 	const ingredientsDetails = useSelector(
-		(state: RootState) => state.ingredients.ingredients
+		(state) => state.ingredients.ingredients
 	);
+	const [ordersWs, setOrdersWs] = useState<IWSMessage | null>(null);
+	const rawMessage = useSelector(getMessage);
+	const isConnectedWs = useSelector(getWebsocketStatus);
 	useEffect(() => {
-		const handleEscButton = (e: KeyboardEvent) => {
-			if (e.key === 'Escape') onClose();
-		};
-		document.addEventListener('keydown', handleEscButton);
-		return () => {
-			document.removeEventListener('keydown', handleEscButton);
-		};
-	}, [onClose]);
-	// Получаем все заказы
-	const orders = useSelector((state: RootState) => state.websocket.orders);
+		if (rawMessage) {
+			try {
+				const parsedMessage: IWSMessage = JSON.parse(rawMessage);
+				setOrdersWs(parsedMessage);
+			} catch (error) {
+				console.error('Ошибка парсинга WS-сообщения:', error);
+			}
+		}
+	}, [rawMessage]);
+	if (!isConnectedWs || !ordersWs) {
+		return (
+			<div className={styles.preloader}>
+				<p className='text text_type_main-medium'>Загружаю заказы...</p>
+			</div>
+		);
+	}
 
+	if (!isConnectedWs) {
+		return (
+			<div className={styles.preloader}>
+				<p className='text text_type_main-medium'>Загружаю заказы...</p>
+			</div>
+		);
+	}
+	// Получаем все заказы
 	// Находим нужный заказ по id
-	const order = orders?.orders.find((order) => order._id === id);
+	const order = ordersWs?.orders.find((order) => order._id === id);
 
 	if (!order) {
 		return <div className={styles.preloader}></div>;
@@ -72,73 +89,55 @@ export const FeedDetails: FC<OrderDetails> = ({ onClose, open }) => {
 		0
 	);
 
-	return modalRoot
-		? createPortal(
-				open && uniqueIngredients && ingredientsDetails && (
-					<ModalOverlay onClose={onClose}>
-						<div className={styles.modal}>
-							<div
-								className={styles.container}
-								onClick={(e) => e.stopPropagation()}>
-								<div className={styles.close_icon}>
-									<CloseIcon
-										type='primary'
-										onClick={onClose}
-										className={styles.close_icon}
-									/>
-								</div>
-								<div className={styles.number}>
-									<p className='text text_type_digits-default'>#{number}</p>
-								</div>
+	return (
+		<div className={styles.modal}>
+			<div className={styles.container} onClick={(e) => e.stopPropagation()}>
+				<div className={styles.number}>
+					<p className='text text_type_digits-default'>#{number}</p>
+				</div>
 
-								<p className='text text_type_main-medium'>{name}</p>
-								<p
-									className={`text text_type_main-default mb-15
+				<p className='text text_type_main-medium'>{name}</p>
+				<p
+					className={`text text_type_main-default mb-15
 									${status === 'done' ? 'text_color_success' : 'text_color_accent'}`}>
-									{status === 'done' ? 'Выполнен' : 'Готовится'}
-								</p>
-								<p className='text text_type_main-medium'>Состав:</p>
-								<div className={styles.ingredientsList}>
-									{uniqueIngredients &&
-										uniqueIngredients.map((ingredient, index) => (
-											<div className={styles.ingredientItem} key={index}>
-												<div className={styles.row}>
-													<div className={styles.dot}>
-														<img
-															src={ingredient?.image}
-															className={styles.dot_img}
-															alt='Ингредиент'
-														/>
-													</div>
-													<p className='text text_type_main-default'>
-														{ingredient?.name}
-													</p>
-												</div>
-												<div className={styles.row}>
-													<p className='text text_type_digits-default'>
-														{ingredient?.count} x {ingredient?.price}
-													</p>
-													<CurrencyIcon type={'primary'} />
-												</div>
-											</div>
-										))}
-								</div>
-								<div className={styles.footer}>
-									<p className='text text_type_main-default text_color_inactive'>
-										<FormattedDate date={new Date(createdAt)} />
-									</p>
-									<div className={styles.row}>
-										<p className='text text_type_digits-default'>
-											{totalPrice}
-										</p>{' '}
-										<CurrencyIcon type={'primary'} />
+					{status === 'done' ? 'Выполнен' : 'Готовится'}
+				</p>
+				<p className='text text_type_main-medium'>Состав:</p>
+				<div className={styles.ingredientsList}>
+					{uniqueIngredients &&
+						uniqueIngredients.map((ingredient, index) => (
+							<div className={styles.ingredientItem} key={index}>
+								<div className={styles.row}>
+									<div className={styles.dot}>
+										<img
+											src={ingredient?.image}
+											className={styles.dot_img}
+											alt='Ингредиент'
+										/>
 									</div>
+									<p className='text text_type_main-default'>
+										{ingredient?.name}
+									</p>
+								</div>
+								<div className={styles.row}>
+									<p className='text text_type_digits-default'>
+										{ingredient?.count} x {ingredient?.price}
+									</p>
+									<CurrencyIcon type={'primary'} />
 								</div>
 							</div>
-						</div>
-					</ModalOverlay>
-				),
-				modalRoot
-		  )
-		: null; // Проверка на случай, если modalRoot не найден
+						))}
+				</div>
+				<div className={styles.footer}>
+					<p className='text text_type_main-default text_color_inactive'>
+						<FormattedDate date={new Date(createdAt)} />
+					</p>
+					<div className={styles.row}>
+						<p className='text text_type_digits-default'>{totalPrice}</p>{' '}
+						<CurrencyIcon type={'primary'} />
+					</div>
+				</div>
+			</div>
+		</div>
+	);
 };

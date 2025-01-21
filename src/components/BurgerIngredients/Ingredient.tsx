@@ -4,13 +4,10 @@ import {
 	Counter,
 	CurrencyIcon,
 } from '@ya.praktikum/react-developer-burger-ui-components';
-import { Modal } from '../Modal/Modal';
-import { OrderDetails } from '../IngredientDetails/ingredient-details';
-import { useModal } from '../../hooks/use-modal';
 import { useDrag } from 'react-dnd';
-import { useDispatch } from 'react-redux';
+import { useDispatch } from '../../store';
 import { setViewedIngredient } from '../../services/reducers/ingredients-slice';
-import { useLocation, useNavigate } from 'react-router';
+import { useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
 export interface IIngredients {
 	_id: string;
@@ -37,8 +34,6 @@ export const Ingredient: FC<IIngredients> = ({
 	type,
 	count,
 }) => {
-	const { isModalOpen, openModal, closeModal } = useModal();
-	const navigate = useNavigate();
 	const location = useLocation();
 	const [, dragRef] = useDrag({
 		type: 'ingredient',
@@ -47,24 +42,6 @@ export const Ingredient: FC<IIngredients> = ({
 	const dispatch = useDispatch();
 	return (
 		<>
-			{isModalOpen && (
-				<Modal
-					onClose={() => closeModal()}
-					open={isModalOpen}
-					title={'Детали ингредиента'}>
-					<OrderDetails
-						name={name}
-						image={image}
-						calories={calories}
-						fat={fat}
-						carbohydrates={carbohydrates}
-						proteins={proteins}
-						price={price}
-						_id={_id}
-						type={type}
-					/>
-				</Modal>
-			)}
 			<Link
 				key={_id}
 				to={`/ingredients/${_id}`}
@@ -74,21 +51,19 @@ export const Ingredient: FC<IIngredients> = ({
 					className={styles.ingredient_item}
 					key={_id}
 					onClick={() => {
-						openModal(),
-							// navigate(`/ingredients/${_id}`)
-							dispatch(
-								setViewedIngredient({
-									_id: _id,
-									name: name,
-									type: type,
-									fat: fat,
-									calories: calories,
-									carbohydrates: carbohydrates,
-									image: image,
-									price: price,
-									proteins: proteins,
-								})
-							);
+						dispatch(
+							setViewedIngredient({
+								_id: _id,
+								name: name,
+								type: type,
+								fat: fat,
+								calories: calories,
+								carbohydrates: carbohydrates,
+								image: image,
+								price: price,
+								proteins: proteins,
+							})
+						);
 					}}>
 					<div>{count && <Counter count={count} extraClass='m-1' />}</div>
 					<img className={styles.img_item} src={image} alt={name} />

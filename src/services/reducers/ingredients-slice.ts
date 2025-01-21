@@ -1,7 +1,6 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAction, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IIngredients } from '../../types/ingredients';
 import { v4 as uuidv4 } from 'uuid';
-
 interface IngredientsState {
 	ingredients: IIngredients[];
 	viewedIngredient: IIngredients | null;
@@ -12,13 +11,6 @@ const initialState: IngredientsState = {
 	ingredients: [],
 	viewedIngredient: null,
 	burgerConstructor: [],
-};
-
-export const addItemToConstructorWithUuid = (ingredient: IIngredients) => {
-	return ingredientsSlice.actions.addItemToConstructor({
-		...ingredient,
-		uuid: uuidv4(),
-	});
 };
 
 const ingredientsSlice = createSlice({
@@ -35,7 +27,7 @@ const ingredientsSlice = createSlice({
 			state,
 			action: PayloadAction<IIngredients & { uuid: string }>
 		) {
-			state.burgerConstructor.push(action.payload);
+			state.burgerConstructor.push({ ...action.payload, uuid: uuidv4() });
 		},
 		removeItemFromConstructor(state, action: PayloadAction<string>) {
 			state.burgerConstructor = state.burgerConstructor.filter(
@@ -54,7 +46,12 @@ const ingredientsSlice = createSlice({
 			state.burgerConstructor = [];
 		},
 	},
+	selectors: {
+		getIngredientsStore: (state) => state.ingredients,
+		getViewIngredientStore: (state) => state.viewedIngredient,
+	},
 });
+
 export const {
 	setIngredients,
 	setViewedIngredient,
@@ -62,5 +59,23 @@ export const {
 	moveItemInConstructor,
 	clearConstructor,
 } = ingredientsSlice.actions;
+
+export const { getIngredientsStore, getViewIngredientStore } =
+	ingredientsSlice.selectors;
+
+// Переносим вниз
+// export const addItemToConstructorWithUuid = (ingredient: IIngredients) => {
+// 	return ingredientsSlice.actions.addItemToConstructor({
+// 		...ingredient,
+// 		uuid: uuidv4(),
+// 	});
+// };
+
+export const addItemToConstructorWithUuid = createAction<IIngredients>(
+	'ingredients/addItemToConstructor'
+);
+export type TAddItemToConstructorActions = ReturnType<
+	typeof addItemToConstructorWithUuid
+>;
 
 export default ingredientsSlice.reducer;
