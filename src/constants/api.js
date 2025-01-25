@@ -1,4 +1,5 @@
 export const BASE_URL = 'https://norma.nomoreparties.space/api';
+export const LOCALHOST_URL = 'localhost:8000';
 
 export const url_ingredients = `${BASE_URL}/ingredients`;
 export const url_order = `${BASE_URL}/orders`;
