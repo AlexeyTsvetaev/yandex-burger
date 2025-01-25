@@ -41,11 +41,9 @@ export const Modal: FC<ModalProps> = ({
 							<div className={styles.modal_content} style={style}>
 								<div className={styles.modal_header}>
 									<p className='text text_type_main-large'>{title}</p>
-									<CloseIcon
-										type='primary'
-										onClick={onClose}
-										className={styles.close_icon}
-									/>
+									<div data-testid='modal-close-icon' onClick={onClose}>
+										<CloseIcon type='primary' className={styles.close_icon} />
+									</div>
 								</div>
 								{children}
 							</div>

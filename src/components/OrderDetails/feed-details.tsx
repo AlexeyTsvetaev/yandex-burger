@@ -5,8 +5,7 @@ import {
 	FormattedDate,
 } from '@ya.praktikum/react-developer-burger-ui-components';
 import { useParams } from 'react-router-dom';
-import { useSelector } from '../../store/';
-import { useDispatch } from '../../store';
+import { useSelector, useDispatch } from '../../store/';
 import { getMessage, getWebsocketStatus } from '../../services/ws/ws-slice';
 import { IWSMessage } from '../../services/ws/ws-types';
 import { wsConnect } from '../../services/ws/ws-actions';

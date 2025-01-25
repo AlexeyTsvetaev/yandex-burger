@@ -7,9 +7,11 @@ interface IOrderDetails {
 
 export const OrderDetails: FC<IOrderDetails> = ({ numberOrder }) => {
 	return (
-		<div className={styles.container}>
+		<div className={styles.container} data-testid='order-details-modal'>
 			<div className={styles.center}>
-				<p className='text text_type_digits-large'>{numberOrder}</p>
+				<p data-testid='number-order' className='text text_type_digits-large'>
+					{numberOrder}
+				</p>
 			</div>
 			<div className={styles.center}>
 				<p className='text text_type_main-medium mb-30'>идентификатор заказа</p>

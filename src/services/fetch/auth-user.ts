@@ -12,7 +12,7 @@ interface AuthRequestBody {
 }
 
 // Интерфейс ответа от сервера при успешной авторизации
-interface AuthResponse {
+export interface AuthResponse {
 	success: boolean;
 	accessToken: string;
 	refreshToken: string;
@@ -27,7 +27,7 @@ export const authUser = async (
 	email: string,
 	password: string,
 	successCallback: () => void
-): Promise<void> => {
+): Promise<AuthResponse> => {
 	const url = url_auth;
 
 	const requestBody: AuthRequestBody = {
@@ -36,7 +36,7 @@ export const authUser = async (
 	};
 
 	try {
-		const response: AuthResponse = await fetchWithRefresh(url, {
+		const response: AuthResponse = await fetchWithRefresh<AuthResponse>(url, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json;charset=utf-8',
@@ -49,8 +49,12 @@ export const authUser = async (
 			setRefTokenToLocal(response.refreshToken);
 			setTokenToLocal(response.accessToken);
 			successCallback();
+			return response; // Возвращаем ответ сервера
 		}
+
+		throw new Error('Авторизация не удалась'); // Генерируем ошибку, если success = false
 	} catch (error) {
-		console.error('Ошибка при регистрации пользователя:', error);
+		console.error('Ошибка при авторизации пользователя:', error);
+		throw error; // Пробрасываем ошибку дальше
 	}
 };

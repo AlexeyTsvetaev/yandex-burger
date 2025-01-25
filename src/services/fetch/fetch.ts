@@ -15,14 +15,20 @@ interface TokenResponse {
 interface ResponseData {
 	ok: boolean;
 	json: () => Promise<any>;
+	status: number;
 }
 
-const checkReponse = (res: ResponseData) => {
-	return res.ok ? res.json() : res.json().then((err) => Promise.reject(err));
-};
+/**
+ * Универсальная проверка ответа сервера
+ */
+export const checkReponse = <T>(res: ResponseData): Promise<T> =>
+	res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`);
 
-export const refreshToken = (): Promise<TokenResponse> => {
-	return fetch(url_token, {
+/**
+ * Функция обновления токена
+ */
+export const refreshToken = async (): Promise<TokenResponse> => {
+	const res = await fetch(url_token, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json;charset=utf-8',
@@ -30,36 +36,42 @@ export const refreshToken = (): Promise<TokenResponse> => {
 		body: JSON.stringify({
 			token: getRefTokenToLocal(),
 		}),
-	})
-		.then(checkReponse)
-		.then((refreshData: TokenResponse) => {
-			if (!refreshData.success) {
-				removeToken();
-				removeRefToken();
-				return Promise.reject(refreshData);
-			}
-			setRefTokenToLocal(refreshData.refreshToken);
-			setTokenToLocal(refreshData.accessToken);
-			return refreshData;
-		});
+	});
+
+	const refreshData = await checkReponse<TokenResponse>(res);
+	if (!refreshData.success) {
+		removeToken();
+		removeRefToken();
+		return Promise.reject(refreshData);
+	}
+
+	setRefTokenToLocal(refreshData.refreshToken);
+	setTokenToLocal(refreshData.accessToken);
+	return refreshData;
 };
 
-export const fetchWithRefresh = async (
+/**
+ * Запрос с автообновлением токена при ошибке
+ */
+export const fetchWithRefresh = async <T>(
 	url: string,
 	options: RequestInit
-): Promise<any> => {
+): Promise<T> => {
 	try {
 		const res = await fetch(url, options);
-		return await checkReponse(res);
+		return await checkReponse<T>(res);
 	} catch (err: any) {
-		if (err.message === 'jwt expired') {
+		if (err.message === 'jwt expired' || err.message === 'Token is invalid') {
 			const refreshData = await refreshToken(); // обновляем токен
-			options.headers = {
-				...options.headers,
-				authorization: refreshData.accessToken,
+			const newOptions: RequestInit = {
+				...options,
+				headers: {
+					...options.headers,
+					authorization: refreshData.accessToken,
+				},
 			};
-			const res = await fetch(url, options); // повторяем запрос
-			return await checkReponse(res);
+			const res = await fetch(url, newOptions); // повторяем запрос
+			return await checkReponse<T>(res);
 		} else {
 			return Promise.reject(err);
 		}

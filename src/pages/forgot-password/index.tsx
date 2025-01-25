@@ -67,6 +67,8 @@ export const ForgotPasswordPage = () => {
 									error={error}
 									size={'default'}
 									extraClass='ml-1'
+									onPointerEnterCapture={undefined}
+									onPointerLeaveCapture={undefined}
 								/>
 								<Button htmlType='submit' type='primary' size='large'>
 									Восстановить

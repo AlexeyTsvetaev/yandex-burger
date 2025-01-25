@@ -22,7 +22,7 @@ import { Modal } from '../Modal/Modal';
 import { getTokenToLocal } from '../../constants/local-storage';
 import { Feed } from '../../pages/feed';
 
-import { useDispatch } from '../../store';
+import { useDispatch, useSelector } from '../../store';
 import { useGetIngredientsQuery } from '../../services/rtk-query/api-slice';
 import { setIngredients } from '../../services/reducers/ingredients-slice';
 import { FeedDetails } from '../OrderDetails/feed-details';
@@ -31,7 +31,6 @@ import { OrderClientDetails } from '../OrderDetails/order-client-details';
 import { OrderDetailsPage } from '../../pages/profile/order-details-page';
 import { OrderDetails } from '../IngredientDetails/ingredient-details';
 import { AppHeader } from '../AppHeader/app-header';
-import { useSelector } from '../../store';
 
 const AppContent = () => {
 	const dispatch = useDispatch();

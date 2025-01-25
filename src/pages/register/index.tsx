@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import styles from '../../components/BurgerIngredients/burger-ingredients.module.css';
-import { AppHeader } from '../../components/AppHeader/app-header';
 import containerStyles from '../login/index.module.scss';
 import {
 	Button,
@@ -56,6 +55,8 @@ export const RegisterPage = () => {
 									name={'name'}
 									size={'default'}
 									extraClass='ml-1'
+									onPointerEnterCapture={undefined}
+									onPointerLeaveCapture={undefined}
 								/>
 								<Input
 									type={'email'}
@@ -67,6 +68,8 @@ export const RegisterPage = () => {
 									error={error}
 									size={'default'}
 									extraClass='ml-1'
+									onPointerEnterCapture={undefined}
+									onPointerLeaveCapture={undefined}
 								/>
 								<PasswordInput
 									onChange={(e) => setPassword(e.target.value)}
