@@ -1,12 +1,6 @@
-import { LOCALHOST_URL } from '../../src/constants/api';
-import {
-	constructorBurger,
-	meatIngredient,
-	bunIngredientSelector,
-} from '../../src/constants/cypres-constants';
 describe('Drag and Drop Burger Ingredient', () => {
 	beforeEach(() => {
-		cy.visit(LOCALHOST_URL);
+		cy.visit('http://localhost:8000/');
 	});
 	// Ждём 500 мс для корректной обработки DnD
 
@@ -15,10 +9,10 @@ describe('Drag and Drop Burger Ingredient', () => {
 		cy.get('[data-testid="bun-top"]').should('not.exist');
 		cy.get('[data-testid="bun-bottom"]').should('not.exist');
 		// Найти ингредиент по data-test-id
-		cy.get(bunIngredientSelector).trigger('dragstart', {
+		cy.get('[data-testid="643d69a5c3f7b9001cfa093c"]').trigger('dragstart', {
 			force: true,
 		});
-		cy.get(constructorBurger).trigger('drop', {
+		cy.get('[data-testid="constructor-burger"]').trigger('drop', {
 			force: true,
 		});
 		// Ждём 500 мс для корректной обработки DnD
@@ -28,18 +22,20 @@ describe('Drag and Drop Burger Ingredient', () => {
 		cy.get('[data-testid="bun-bottom"]').should('exist');
 
 		//2 раза филе добавляю
-		cy.get(meatIngredient).trigger('dragstart', {
+		cy.get('[data-testid="643d69a5c3f7b9001cfa093e"]').trigger('dragstart', {
 			force: true,
 		});
-		cy.get(constructorBurger).trigger('drop', {
+		cy.get('[data-testid="constructor-burger"]').trigger('drop', {
 			force: true,
 		});
-		cy.get(meatIngredient).trigger('dragstart', {
+		cy.get('[data-testid="643d69a5c3f7b9001cfa093e"]').trigger('dragstart', {
 			force: true,
 		});
-		cy.get(constructorBurger).trigger('drop', {
+		cy.get('[data-testid="constructor-burger"]').trigger('drop', {
 			force: true,
 		});
-		cy.get(constructorBurger).find(meatIngredient).should('have.length', 2);
+		cy.get('[data-testid="constructor-burger"]')
+			.find('[data-testid="643d69a5c3f7b9001cfa093e"]')
+			.should('have.length', 2);
 	});
 });
