@@ -1,13 +1,12 @@
-export const url_ingredients =
-	'https://norma.nomoreparties.space/api/ingredients';
-export const url_order = 'https://norma.nomoreparties.space/api/orders';
-export const url_auth = 'https://norma.nomoreparties.space/api/auth/login';
-export const url_reg = 'https://norma.nomoreparties.space/api/auth/register';
-export const url_logout = 'https://norma.nomoreparties.space/api/auth/logout';
-export const url_token = 'https://norma.nomoreparties.space/api/auth/token';
-export const url_get_user = 'https://norma.nomoreparties.space/api/auth/user';
-export const url_patch_user = 'https://norma.nomoreparties.space/api/auth/user';
-export const url_password_reset_step_1 =
-	'https://norma.nomoreparties.space/api/password-reset';
-export const url_password_reset_step_2 =
-	'https://norma.nomoreparties.space/api/password-reset/reset';
+export const BASE_URL = 'https://norma.nomoreparties.space/api';
+
+export const url_ingredients = `${BASE_URL}/ingredients`;
+export const url_order = `${BASE_URL}/orders`;
+export const url_auth = `${BASE_URL}/api/auth/login`;
+export const url_reg = `${BASE_URL}/api/auth/register`;
+export const url_logout = `${BASE_URL}/api/auth/logout`;
+export const url_token = `${BASE_URL}/api/auth/token`;
+export const url_get_user = `${BASE_URL}/api/auth/user`;
+export const url_patch_user = `${BASE_URL}/api/auth/user`;
+export const url_password_reset_step_1 = `${BASE_URL}/api/password-reset`;
+export const url_password_reset_step_2 = `${BASE_URL}/api/password-reset/reset`;

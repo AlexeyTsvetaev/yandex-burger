@@ -73,7 +73,7 @@ export const ProfilePage = () => {
 	return (
 		<>
 			{isLoading ? (
-				<p className={`text text_type_main-medium`}>Загружаем данные...</p>
+				<p className={'text text_type_main-medium'}>Загружаем данные...</p>
 			) : (
 				<div className={containerStyles.container}>
 					<div className={styles.modal_container}>
@@ -122,6 +122,8 @@ export const ProfilePage = () => {
 													onIconClick={() => setNameEdit(false)}
 													placeholder={'Имя'}
 													icon={'EditIcon'}
+													onPointerEnterCapture={undefined}
+													onPointerLeaveCapture={undefined}
 												/>
 												<Input
 													onChange={(e) => setEmail(e.target.value)}
@@ -129,6 +131,8 @@ export const ProfilePage = () => {
 													disabled={emailEdit}
 													value={email}
 													placeholder={'Логин'}
+													onPointerEnterCapture={undefined}
+													onPointerLeaveCapture={undefined}
 													icon={'EditIcon'}
 												/>
 												<Input
@@ -139,6 +143,8 @@ export const ProfilePage = () => {
 													onIconClick={() => setPasswordEdit(false)}
 													icon={'EditIcon'}
 													placeholder={'Пароль'}
+													onPointerEnterCapture={undefined}
+													onPointerLeaveCapture={undefined}
 												/>
 												<div className={profileStyles.profile_info_buttons}>
 													{(!emailEdit || !nameEdit || !passwordEdit) && (

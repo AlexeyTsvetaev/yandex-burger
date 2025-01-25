@@ -11,13 +11,13 @@ export const apiSlice = createApi({
 	reducerPath: 'api',
 	baseQuery: fetchBaseQuery({
 		baseUrl: '/api',
-		prepareHeaders: (headers) => {
-			const token = getTokenToLocal(); // Достаем токен из localStorage
-			if (token) {
-				headers.set('Authorization', `${token}`); // Добавляем токен в заголовки
-			}
-			return headers;
-		},
+		// prepareHeaders: (headers) => {
+		// 	const token = getTokenToLocal(); // Достаем токен из localStorage
+		// 	if (token) {
+		// 		headers.set('Authorization', `${token}`); // Добавляем токен в заголовки
+		// 	}
+		// 	return headers;
+		// },
 	}),
 	endpoints: (builder) => ({
 		getIngredients: builder.query<IIngredientsResponse, void>({

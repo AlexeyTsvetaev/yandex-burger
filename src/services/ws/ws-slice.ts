@@ -46,3 +46,4 @@ export const { getMessage, getWebsocketStatus } = websocketSlice.selectors;
 export type TWsInternalActions = ReturnType<
 	(typeof websocketSlice.actions)[keyof typeof websocketSlice.actions]
 >;
+export default websocketSlice.reducer;

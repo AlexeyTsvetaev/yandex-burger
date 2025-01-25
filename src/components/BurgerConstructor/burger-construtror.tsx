@@ -11,14 +11,13 @@ import { OrderDetails } from '../OrderDetails/order-details';
 import { IIngredients } from '../BurgerIngredients/Ingredient';
 import { useModal } from '../../hooks/use-modal';
 import { useDrop, useDrag } from 'react-dnd';
-import { useDispatch, useSelector } from '../../store';
+import { useDispatch, useSelector, RootState } from '../../store';
 import {
 	removeItemFromConstructor,
 	moveItemInConstructor,
 	addItemToConstructorWithUuid,
 	clearConstructor,
 } from '../../services/reducers/ingredients-slice';
-import { RootState } from '../../store';
 import { ICreateOrderResponse } from '../../types/ingredients';
 import { useCreateOrderMutation } from '../../services/rtk-query/api-slice';
 import { getRefTokenToLocal } from '../../constants/local-storage';
@@ -121,6 +120,7 @@ export const BurgerConstructor: FC = () => {
 
 		return (
 			<div
+				data-testid={ingredient._id}
 				ref={(node) => dragRef(dropRef(node))}
 				className={styles.item_constr}>
 				<DragIcon type='primary' />
@@ -162,18 +162,23 @@ export const BurgerConstructor: FC = () => {
 					/>
 				</OrderModal>
 			)}
-			<div className={styles.container} ref={dropRef}>
+			<div
+				className={styles.container}
+				ref={dropRef}
+				data-testid='constructor-burger'>
 				<div className={styles.main}>
 					<div className={styles.ingredients_block}>
 						<div className={styles.bread_container}>
 							{bun && (
-								<ConstructorElement
-									type='top'
-									isLocked={true}
-									text={`${bun.name} (верх)`}
-									price={bun.price}
-									thumbnail={bun.image}
-								/>
+								<div data-testid='bun-top'>
+									<ConstructorElement
+										type='top'
+										isLocked={true}
+										text={`${bun.name} (верх)`}
+										price={bun.price}
+										thumbnail={bun.image}
+									/>
+								</div>
 							)}
 						</div>
 
@@ -189,13 +194,15 @@ export const BurgerConstructor: FC = () => {
 
 						<div className={styles.bread_container}>
 							{bun && (
-								<ConstructorElement
-									type='bottom'
-									isLocked={true}
-									text={`${bun.name} (низ)`}
-									price={bun.price}
-									thumbnail={bun.image}
-								/>
+								<div data-testid='bun-bottom'>
+									<ConstructorElement
+										type='bottom'
+										isLocked={true}
+										text={`${bun.name} (низ)`}
+										price={bun.price}
+										thumbnail={bun.image}
+									/>
+								</div>
 							)}
 						</div>
 					</div>
@@ -207,6 +214,7 @@ export const BurgerConstructor: FC = () => {
 						<CurrencyIcon type='primary' />
 					</div>
 					<Button
+						data-testid='order-button'
 						htmlType='button'
 						type='primary'
 						size='large'

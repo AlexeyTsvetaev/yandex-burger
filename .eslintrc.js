@@ -10,6 +10,7 @@ module.exports = {
 			version: 'detect',
 		},
 	},
+	plugins: ['cypress'],
 	extends: [
 		'plugin:@typescript-eslint/recommended',
 		'plugin:prettier/recommended',
@@ -21,6 +22,7 @@ module.exports = {
 		'plugin:import/typescript',
 		'plugin:jsx-a11y/recommended',
 		'plugin:eslint-comments/recommended',
+		'plugin:cypress/recommended',
 	],
 	rules: {
 		semi: [2, 'always'],

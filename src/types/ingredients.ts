@@ -15,12 +15,9 @@ export interface IIngredientsResponse {
 	data: IIngredients[];
 }
 
-
-
 export interface ICreateOrderRequest {
 	ingredients: string[]; // Массив идентификаторов ингредиентов
 }
-
 
 export interface ICreateOrderResponse {
 	name: string;

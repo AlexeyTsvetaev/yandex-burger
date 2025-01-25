@@ -25,9 +25,12 @@ const ingredientsSlice = createSlice({
 		},
 		addItemToConstructor(
 			state,
-			action: PayloadAction<IIngredients & { uuid: string }>
+			action: PayloadAction<IIngredients & { uuid?: string }>
 		) {
-			state.burgerConstructor.push({ ...action.payload, uuid: uuidv4() });
+			state.burgerConstructor.push({
+				...action.payload,
+				uuid: action.payload.uuid || uuidv4(),
+			});
 		},
 		removeItemFromConstructor(state, action: PayloadAction<string>) {
 			state.burgerConstructor = state.burgerConstructor.filter(
@@ -58,6 +61,7 @@ export const {
 	removeItemFromConstructor,
 	moveItemInConstructor,
 	clearConstructor,
+	addItemToConstructor,
 } = ingredientsSlice.actions;
 
 export const { getIngredientsStore, getViewIngredientStore } =

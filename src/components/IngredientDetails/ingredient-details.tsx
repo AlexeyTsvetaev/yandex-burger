@@ -14,48 +14,72 @@ export const OrderDetails = () => {
 	}
 	return (
 		<div className={styles.modal_container}>
-			<img src={data.image} alt={data.name} className={styles.image} />
-			<p className='text text_type_main-medium'>{data.name}</p>
+			{data.image && (
+				<img
+					src={data.image}
+					alt={data.name}
+					className={styles.image}
+					data-testid='ingredient-image'
+				/>
+			)}
+			{data.name && (
+				<p className='text text_type_main-medium' data-testid='ingredient-name'>
+					{data.name}
+				</p>
+			)}
 			<div className={styles.info_container}>
 				<div className={styles.info_item}>
 					<p
 						className={`${styles.f16} text text_type_main-default text_color_inactive`}>
 						Калории, ккал
 					</p>
-					<p
-						className={`${styles.f28} text text_type_main-default text_color_inactive`}>
-						{data.calories}
-					</p>
+					{data.calories && (
+						<p
+							className={`${styles.f28} text text_type_main-default text_color_inactive`}
+							data-testid='ingredient-calories'>
+							{data.calories}
+						</p>
+					)}
 				</div>
 				<div className={styles.info_item}>
 					<p
 						className={`${styles.f16} text text_type_main-default text_color_inactive`}>
 						Белки, г
 					</p>
-					<p
-						className={`${styles.f28} text text_type_main-default text_color_inactive`}>
-						{data.proteins}
-					</p>
+					{data.proteins && (
+						<p
+							className={`${styles.f28} text text_type_main-default text_color_inactive`}
+							data-testid='ingredient-proteins'>
+							{data.proteins}
+						</p>
+					)}
 				</div>
 				<div className={styles.info_item}>
 					<p
 						className={`${styles.f16} text text_type_main-default text_color_inactive`}>
 						Жиры, г
 					</p>
-					<p
-						className={`${styles.f28} text text_type_main-default text_color_inactive`}>
-						{data.fat}
-					</p>
+					{data.fat && (
+						<p
+							className={`${styles.f28} text text_type_main-default text_color_inactive`}
+							data-testid='ingredient-fat'>
+							{data.fat}
+						</p>
+					)}
 				</div>
 				<div className={styles.info_item}>
 					<p
 						className={`${styles.f16} text text_type_main-default text_color_inactive`}>
 						Углеводы, г
 					</p>
-					<p
-						className={`${styles.f28} text text_type_main-default text_color_inactive`}>
-						{data.carbohydrates}
-					</p>
+
+					{data.carbohydrates && (
+						<p
+							className={`${styles.f28} text text_type_main-default text_color_inactive`}
+							data-testid='ingredient-carbohydrates'>
+							{data.carbohydrates}
+						</p>
+					)}
 				</div>
 			</div>
 		</div>

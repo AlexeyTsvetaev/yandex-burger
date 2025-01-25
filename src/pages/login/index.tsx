@@ -56,6 +56,8 @@ export const LoginPage = () => {
 									error={error}
 									size={'default'}
 									extraClass='ml-1'
+									onPointerEnterCapture={undefined}
+									onPointerLeaveCapture={undefined}
 								/>
 								<PasswordInput
 									onChange={(e) => setPassword(e.target.value)}

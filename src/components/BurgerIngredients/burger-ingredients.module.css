@@ -18,6 +18,7 @@
 }
 
 .ingredient_item {
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
@@ -25,7 +26,6 @@
 	width: 272px;
 	height: 208px;
 	cursor: pointer;
-	position: relative;
 }
 
 .ingredients_container {

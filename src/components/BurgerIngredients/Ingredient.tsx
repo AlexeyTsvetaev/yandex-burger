@@ -50,6 +50,7 @@ export const Ingredient: FC<IIngredients> = ({
 					ref={dragRef}
 					className={styles.ingredient_item}
 					key={_id}
+					data-testid={_id}
 					onClick={() => {
 						dispatch(
 							setViewedIngredient({

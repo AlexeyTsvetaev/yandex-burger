@@ -60,6 +60,8 @@ export const ResetPasswordPage = () => {
 									name={'код'}
 									size={'default'}
 									extraClass='ml-1'
+									onPointerEnterCapture={undefined}
+									onPointerLeaveCapture={undefined}
 								/>
 								<Button htmlType='submit' type='primary' size='large'>
 									Сохранить
