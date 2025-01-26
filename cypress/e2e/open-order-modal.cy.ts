@@ -6,6 +6,9 @@ import {
 	constructorBurger,
 	modalCloseIcon,
 	bunIngredientSelector,
+	bunTop,
+	bunBottom,
+	ingredientRoute,
 } from '../../src/constants/cypres-constants';
 describe('Open order modal', () => {
 	beforeEach(() => {
@@ -30,8 +33,8 @@ describe('Open order modal', () => {
 		// Ждём 500 мс для корректной обработки DnD
 		cy.wait(500);
 		// Проверяем, что булка добавилась в конструктор
-		cy.get('[data-testid="bun-top"]').should('exist');
-		cy.get('[data-testid="bun-bottom"]').should('exist');
+		cy.get(bunTop).should('exist');
+		cy.get(bunBottom).should('exist');
 
 		//2 раза филе добавляю
 		cy.get(meatIngredient).trigger('dragstart', {

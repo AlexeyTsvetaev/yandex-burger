@@ -3,6 +3,8 @@ import {
 	constructorBurger,
 	meatIngredient,
 	bunIngredientSelector,
+	bunTop,
+	bunBottom,
 } from '../../src/constants/cypres-constants';
 describe('Drag and Drop Burger Ingredient', () => {
 	beforeEach(() => {
@@ -12,8 +14,8 @@ describe('Drag and Drop Burger Ingredient', () => {
 
 	it('should drag and drop an ingredients into the constructor', () => {
 		cy.wait(500);
-		cy.get('[data-testid="bun-top"]').should('not.exist');
-		cy.get('[data-testid="bun-bottom"]').should('not.exist');
+		cy.get(bunTop).should('not.exist');
+		cy.get(bunBottom).should('not.exist');
 		// Найти ингредиент по data-test-id
 		cy.get(bunIngredientSelector).trigger('dragstart', {
 			force: true,
@@ -24,8 +26,8 @@ describe('Drag and Drop Burger Ingredient', () => {
 		// Ждём 500 мс для корректной обработки DnD
 		cy.wait(500);
 		// Проверяем, что булка добавилась в конструктор
-		cy.get('[data-testid="bun-top"]').should('exist');
-		cy.get('[data-testid="bun-bottom"]').should('exist');
+		cy.get(bunTop).should('exist');
+		cy.get(bunBottom).should('exist');
 
 		//2 раза филе добавляю
 		cy.get(meatIngredient).trigger('dragstart', {
